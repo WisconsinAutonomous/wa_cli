@@ -33,6 +33,7 @@ subparsers may be `sim` to do things related to `wa_simulator`, or
 """
 # Command imports
 import wa_cli.script as script
+import wa_cli.sim as sim
 
 # Utility imports
 from wa_cli.utils.logger import set_verbosity
@@ -52,6 +53,7 @@ def main():
     # Initialize the subparsers
     subparsers = parser.add_subparsers()
     script.init(subparsers.add_parser("script", description="Entrypoint for various generic scripts useful to Wisconsin Autonomous members"))
+    sim.init(subparsers.add_parser("sim", description="Entrypoint for WA simulator related commands"))
 
     # Parse the arguments and update logging
     args = parser.parse_args()
