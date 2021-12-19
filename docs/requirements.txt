@@ -6,6 +6,6 @@ numpy==1.19.4
 matplotlib==3.3.3
 scipy
 myst_parser==0.13.1
-wa_simulator
+wa_cli
 ipython
 dill
