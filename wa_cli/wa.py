@@ -41,8 +41,10 @@ from wa_cli.utils.logger import set_verbosity
 # General imports
 import argparse
 
-
-def main():
+def init():
+    """
+    The root entrypoint for the ``wa_cli`` is ``wa``. This the first command you need to access the CLI. All subsequent subcommands succeed ``wa``.
+    """
     # Main entrypoint and initialize the cmd method
     # set_defaults specifies a method that is called if that parser is used
     parser = argparse.ArgumentParser(description="Wisconsin Autonomous Command Line Interface") # noqa
@@ -54,6 +56,12 @@ def main():
     subparsers = parser.add_subparsers()
     script.init(subparsers.add_parser("script", description="Entrypoint for various generic scripts useful to Wisconsin Autonomous members"))
     sim.init(subparsers.add_parser("sim", description="Entrypoint for WA simulator related commands"))
+
+    return parser
+
+def main():
+    # Create the parser
+    parser = init()
 
     # Parse the arguments and update logging
     args = parser.parse_args()

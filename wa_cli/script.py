@@ -34,6 +34,9 @@ from wa_cli.utils.dependencies import check_for_dependency
 
 
 def run_license(args):
+    """The license command will automatically place headers at the top of each requested file.
+
+    """
     LOGGER.debug("Running 'script license' entrypoint...")
 
     # Don't want to have install everything when wa_cli is installed
@@ -79,6 +82,15 @@ def run_license(args):
     LOGGER.info("Finished running licenseheaders script.")
 
 def init(subparser):
+    """Initializer method for the :code:`script` entrypoint.
+
+    This entrypoint serves as a mechanism for running various scripts meant for members of the
+    Wisconsin Autonomous student organization.
+
+    Current subcommands:
+        - :code:`license`: Automatically adds a license headers to files in a directory
+    """
+
     # Create some entrypoints for additional commands
     subparsers = subparser.add_subparsers(required=False)
 
@@ -93,4 +105,6 @@ def init(subparser):
     license.add_argument("--projurl", type=str, help="URL of the project.", default="https://wa.wisc.edu")
     license.add_argument("--ext", type=str, nargs="*", help="If specified, restrict processing to the specified extension(s) only.", default=["py", "cpp"])
     license.set_defaults(cmd=run_license)
+
+    return subparser
 

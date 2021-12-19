@@ -9,7 +9,7 @@ import argparse
 import pathlib
 
 def run_run(args):
-    """The start command will spin up a Docker container that runs a python script with the desired image.
+    """The run command will spin up a Docker container that runs a python script with the desired image.
 
     The use case for the start command is when we'd like to run a :code:`wa_simulator` script with a certain
     operating system configuration or in a way that's distributable across computers. Everyone's setup is different,
@@ -283,7 +283,7 @@ def run_run(args):
             raise e
 
 def init(subparser):
-    """Initializer method for the :code:`docker` entrypoint.
+    """Initializer method for the :code:`sim` entrypoint.
 
     The entrypoint serves as a mechanism for running containers with :code:`wa_simulator`. It may be
     desireable to have a containerized system for running :code:`wa_simulator`; for instance, if a script
@@ -295,10 +295,10 @@ def init(subparser):
     .. highlight:: bash
     .. code-block:: bash
 
-        wasim docker -h
+        wa sim -h
 
     Current subcommands:
-        * :code:`start`: Spins up a container and runs a python script in the created container.
+        * :code:`run`: Spins up a container and runs a python script in the created container.
     """
     LOGGER.debug("Running 'sim' entrypoint...")
 
@@ -321,3 +321,4 @@ def init(subparser):
     run.add_argument("script_args", nargs=argparse.REMAINDER, help="The arguments for the [script]")
     run.set_defaults(cmd=run_run)
 
+    return subparser
