@@ -1,0 +1,498 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
+
+    <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.0.4 documentation</title>
+      <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
+    <link rel="stylesheet" href="_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
+    
+
+
+<style>
+  :root {
+    --color-code-background: #f0f0f0;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f0f0f0;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <link rel="stylesheet" href="_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script defer="defer" src="_static/jquery.js"></script>
+    <script defer="defer" src="_static/underscore.js"></script>
+    <script defer="defer" src="_static/doctools.js"></script>
+    <script defer src="_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     
+        <a style="text-decoration: none; color: white;" 
+           href="https://wa.wisc.edu">
+           <img src="https://github.com/WisconsinAutonomous/wa-resources/blob/master/Images/wa-dark.png?raw=true" 
+                style="vertical-align: middle; display: inline; padding-right: 7.5px; height: 20px;"/>
+           Checkout our website!
+        </a>
+     
+  </aside>
+</div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.0.4 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/wa-light.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/wa-dark.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="search.html">
+  <input class="sidebar-search" placeholder=Search name="q">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p><span class="caption-text">External Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/wa-cli/">PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/WisconsinAutonomous/wa_cli">Github</a></li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<style>
+	h4 {text-transform: lowercase;}
+</style><section id="wa">
+<h2><code class="docutils literal notranslate"><span class="pre">wa</span></code><a class="headerlink" href="#wa" title="Permalink to this headline">¶</a></h2>
+<p>The root entrypoint for the <code class="docutils literal notranslate"><span class="pre">wa_cli</span></code> is <code class="docutils literal notranslate"><span class="pre">wa</span></code>. This the first command you need to access the CLI. All subsequent subcommands succeed <code class="docutils literal notranslate"><span class="pre">wa</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">]</span> <span class="p">{</span><span class="n">script</span><span class="p">,</span><span class="n">sim</span><span class="p">}</span> <span class="o">...</span>
+</pre></div>
+</div>
+<section id="Named Arguments">
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h3>
+<dl class="option-list">
+<dt><kbd>-v, --verbose</kbd></dt>
+<dd><p>Level of verbosity</p>
+<p>Default: 0</p>
+</dd>
+<dt><kbd>--dry-run</kbd></dt>
+<dd><p>Run as a dry run</p>
+<p>Default: False</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="sub-commands">
+<h2>Sub-commands<a class="headerlink" href="#sub-commands" title="Permalink to this headline">¶</a></h2>
+<p>Subcommands immediately succeed the <code class="docutils literal notranslate"><span class="pre">wa</span></code> command. They implement additional logic. Having subcommands rather than arguments directly to <code class="docutils literal notranslate"><span class="pre">wa</span></code> increases expandability as it will allow for additional features to be implemented without convoluting the help menu of the base <code class="docutils literal notranslate"><span class="pre">wa</span></code> command.</p>
+<section id="script">
+<h3><code class="docutils literal notranslate"><span class="pre">script</span></code><a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h3>
+<p>Initializer method for the :code:<code class="docutils literal notranslate"><span class="pre">script</span></code> entrypoint.</p>
+<p>This entrypoint serves as a mechanism for running various scripts meant for members of the
+Wisconsin Autonomous student organization.</p>
+<p>Current subcommands:
+- :code:<code class="docutils literal notranslate"><span class="pre">license</span></code>: Automatically adds a license headers to files in a directory</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">script</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">license</span><span class="p">}</span> <span class="o">...</span>
+</pre></div>
+</div>
+<section id="script-license">
+<h4><code class="docutils literal notranslate"><span class="pre">script</span> <span class="pre">license</span></code><a class="headerlink" href="#script-license" title="Permalink to this headline">¶</a></h4>
+<p>The license command will automatically place headers at the top of each requested file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">script</span> <span class="n">license</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tmpl</span> <span class="n">TMPL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">years</span> <span class="n">YEARS</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">projname</span> <span class="n">PROJNAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">owner</span> <span class="n">OWNER</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">projurl</span> <span class="n">PROJURL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ext</span> <span class="p">[</span><span class="n">EXT</span> <span class="p">[</span><span class="n">EXT</span> <span class="o">...</span><span class="p">]]]</span>
+                         <span class="nb">dir</span>
+</pre></div>
+</div>
+<section id="Positional Arguments">
+<h5>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>dir</kbd></dt>
+<dd><p>The directory to recursively process.</p>
+</dd>
+</dl>
+</section>
+<section id="Named Arguments">
+<h5>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>--tmpl</kbd></dt>
+<dd><p>Template file to use. If it is not set, will default to using the template shipped with the package.</p>
+</dd>
+<dt><kbd>--years</kbd></dt>
+<dd><p>Year or year range to use. If not set, will use the 2018-&lt;the current year&gt;.</p>
+</dd>
+<dt><kbd>--projname</kbd></dt>
+<dd><p>Name of the project.</p>
+<p>Default: “WA”</p>
+</dd>
+<dt><kbd>--owner</kbd></dt>
+<dd><p>Name of the copyright owner.</p>
+<p>Default: “Wisconsin Autonomous”</p>
+</dd>
+<dt><kbd>--projurl</kbd></dt>
+<dd><p>URL of the project.</p>
+<p>Default: “<a class="reference external" href="https://wa.wisc.edu">https://wa.wisc.edu</a>”</p>
+</dd>
+<dt><kbd>--ext</kbd></dt>
+<dd><p>If specified, restrict processing to the specified extension(s) only.</p>
+<p>Default: [‘py’, ‘cpp’]</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+<section id="sim">
+<h3><code class="docutils literal notranslate"><span class="pre">sim</span></code><a class="headerlink" href="#sim" title="Permalink to this headline">¶</a></h3>
+<p>Initializer method for the :code:<code class="docutils literal notranslate"><span class="pre">sim</span></code> entrypoint.</p>
+<p>The entrypoint serves as a mechanism for running containers with :code:<code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code>. It may be
+desireable to have a containerized system for running :code:<code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code>; for instance, if a script
+requiries a certain package, the Docker image could be shipped without needing to install the package
+on a system locally. The scalability of using Docker over installing packages on a system is much greater.</p>
+<p>To see specific commands that are available, run the following command:</p>
+<p>.. highlight:: bash
+.. code-block:: bash</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wa sim -h
+</pre></div>
+</div>
+<p>Current subcommands:
+* :code:<code class="docutils literal notranslate"><span class="pre">run</span></code>: Spins up a container and runs a python script in the created container.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">sim</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">}</span> <span class="o">...</span>
+</pre></div>
+</div>
+<section id="sim-run">
+<h4><code class="docutils literal notranslate"><span class="pre">sim</span> <span class="pre">run</span></code><a class="headerlink" href="#sim-run" title="Permalink to this headline">¶</a></h4>
+<p>The run command will spin up a Docker container that runs a python script with the desired image.</p>
+<p>The use case for the start command is when we’d like to run a :code:<code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> script with a certain
+operating system configuration or in a way that’s distributable across computers. Everyone’s setup is different,
+i.e. OS, development environment, packages installed. Using Docker, you can simply run :code:<code class="docutils literal notranslate"><span class="pre">wasim</span> <span class="pre">docker</span> <span class="pre">start</span> <span class="pre">...</span></code>
+and run :code:<code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> agnostic from your local system.</p>
+<p>The start command requires one argument: a python script to run in the container.
+The python script is the actual file we’ll run from within the
+container. After the python script, you may add arguments that will get passed to the script
+when it’s run in the container.</p>
+<p>Optionally, you may provide a JSON configuration file. The JSON file defines various settings we’ll
+use when spinning up the container. If a JSON configuration file is not provided, you must pass these options
+via the command line. There are many default values, so not all configurations are necessarily needed through
+the command line.</p>
+<p>JSON Settings:
+*   :code:<code class="docutils literal notranslate"><span class="pre">Container</span> <span class="pre">Name</span></code> (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to “wasim-docker”.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* :code:`Image` (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to "wiscauto/wa_simulator:latest".
+
+* :code:`Data` (list, optional): The folder that has all of the data files that will be used in the simulation. If you're familiar with docker, these will become `volumes &lt;https://docs.docker.com/storage/volumes/&gt;_`. By default, no volumes will be created if ``Data`` is left empty. Each entry in the ``Data`` list will be made a ``volumes`` and may have the following attributes:
+
+    * ``Host Path`` (str, required): The path to the local folder that will be copied to the container. If ``Host Path Is Relative To JSON`` is not set to True (see below), it will be assumed as a global path
+
+    * ``Host Path Is Relative To JSON`` (bool, optional): If set to True, the ``Host Path`` entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.
+
+    * ``Container Path`` (str, optional): The path in the container to link the host path to. Defaults to ``/root/&lt;file/folder name&gt;``.
+
+* :code:`Port` (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.
+
+* :code:`Network` (dict, optional): The network that the container should use for communication. See Docker `networks &lt;https://docs.docker.com/network&gt;_`. The ``Network`` dict must include a ``Name``, representing the name of the network, and optionally an ``IPv4`` field, representing the static ip to assign to the container. If no ``IPv4`` field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because ``Name`` hasn't been created, the submask will be generated from ``IPv4``.
+</pre></div>
+</div>
+<p>Example JSON file:</p>
+<p>.. highlight:: javascript
+.. code-block:: javascript</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    "Name": "Demo bridge",
+    "Type": "Bridge",
+
+    "Container Name": "wasim-docker",
+    "Image": "wiscauto/wa_simulator:latest",
+    "Data": [
+        {
+            "Path": "../data",
+            "Path Is Relative To JSON": true
+        }
+    ],
+    "Network": {
+        "Name": "wa",
+        "IPv4": "172.30.0.3"
+    }
+}
+</pre></div>
+</div>
+<p>Example cli commands:</p>
+<p>.. highlight:: bash
+.. code-block:: bash</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># ---------
+# With JSON
+# ---------
+
+# Run from within wa_simulator/demos/bridge
+wasim docker start --json demo_bridge.json demo_bridge_server.py
+
+# With more verbosity
+wasim -vv docker start --json demo_bridge.json demo_bridge_server.py
+
+# With some script arguments
+wasim -vv docker start --json demo_bridge.json demo_bridge_server.py --step_size 2e-3
+
+# ------------
+# Without JSON
+# ------------
+
+# Run from within wa_simulator/demos/bridge
+# Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json
+# This should be used to communicate with a client running on the host
+wasim docker start \
+        --name wasim-docker \
+        --image wiscauto/wa_simulator \
+        --data "../data:/root/data" \
+        --data "/usr/local:/usr/local" \ # Each entry serves as a new volume
+        --port "5555:5555" \
+        demo_bridge_server.py --step_size 2e-3
+
+# Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json
+# This should be used to communicate with another client in a container
+wasim docker start \
+        --name wasim-docker \
+        --image wiscauto/wa_simulator \
+        --data "../data:/root/data" \
+        --data "/usr/local:/usr/local" \ # Each entry serves as a new volume
+        --network "wa" \
+        demo_bridge_server.py --step_size 2e-3
+
+# Same thing as above, but leverages defaults
+wasim -vv docker start demo_bridge_server.py --step_size 2e-3
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">sim</span> <span class="n">run</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">json</span> <span class="n">JSON</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">image</span> <span class="n">IMAGE</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">data</span> <span class="n">DATA</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
+                  <span class="n">script</span> <span class="o">...</span>
+</pre></div>
+</div>
+<section id="Positional Arguments">
+<h5>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>script</kbd></dt>
+<dd><p>The script to run up in the Docker container</p>
+</dd>
+<dt><kbd>script_args</kbd></dt>
+<dd><p>The arguments for the [script]</p>
+</dd>
+</dl>
+</section>
+<section id="Named Arguments">
+<h5>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>--json</kbd></dt>
+<dd><p>JSON file with docker configuration</p>
+</dd>
+<dt><kbd>--name</kbd></dt>
+<dd><p>Name of the container.</p>
+<p>Default: “wasim-docker”</p>
+</dd>
+<dt><kbd>--image</kbd></dt>
+<dd><p>Name of the image to run.</p>
+<p>Default: “wiscauto/wa_simulator:latest”</p>
+</dd>
+<dt><kbd>--data</kbd></dt>
+<dd><p>Data to pass to the container as a Docker volume. Multiple data entries can be provided.</p>
+<p>Default: []</p>
+</dd>
+<dt><kbd>--port</kbd></dt>
+<dd><p>Ports to expose from the container.</p>
+<p>Default: “”</p>
+</dd>
+<dt><kbd>--network</kbd></dt>
+<dd><p>The network to communicate with.</p>
+<p>Default: “”</p>
+</dd>
+<dt><kbd>--ip</kbd></dt>
+<dd><p>The static ip address to use when connecting to ‘network’. Used as the server ip.</p>
+<p>Default: “172.20.0.3”</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+</section>
+</section>
+
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="contributing.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Contributing</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="installation.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Installation</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2021, Wisconsin Autonomous
+            |
+            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+              and
+              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+              <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            |
+            <a class="muted-link" href="_sources/usage.md.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Usage</a><ul>
+<li><a class="reference internal" href="#wa"><code class="docutils literal notranslate"><span class="pre">wa</span></code></a><ul>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sub-commands">Sub-commands</a><ul>
+<li><a class="reference internal" href="#script"><code class="docutils literal notranslate"><span class="pre">script</span></code></a><ul>
+<li><a class="reference internal" href="#script-license"><code class="docutils literal notranslate"><span class="pre">script</span> <span class="pre">license</span></code></a><ul>
+<li><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sim"><code class="docutils literal notranslate"><span class="pre">sim</span></code></a><ul>
+<li><a class="reference internal" href="#sim-run"><code class="docutils literal notranslate"><span class="pre">sim</span> <span class="pre">run</span></code></a><ul>
+<li><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </main>
+</div>
+  </body>
+</html>
