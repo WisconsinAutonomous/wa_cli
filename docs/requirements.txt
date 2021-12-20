@@ -7,5 +7,6 @@ matplotlib==3.3.3
 scipy
 myst_parser==0.13.1
 wa_cli
+wa_simulator
 ipython
 dill
