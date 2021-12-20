@@ -5,8 +5,8 @@ This repository holds the WA CLI tool. This tool is expandable and is primarily 
 ## Documentation
 
 - [Home](https://wisconsinautonomous.github.io/wa_cli/index.html)
-- [Installation](https://wisconsinautonomous.github.io/wa_cli/install.html)
-- [Usage Guide](https://wisconsinautonomous.github.io/wa_cli/autoapi/wa_cli/index.html)
+- [Installation](https://wisconsinautonomous.github.io/wa_cli/installing.html)
+- [Usage Guide](https://wisconsinautonomous.github.io/wa_cli/usage.html)
 - [PyPI](https://pypi.org/project/wa-cli/)
 - [Github](https://github.com/WisconsinAutonomous/wa_cli)
 
