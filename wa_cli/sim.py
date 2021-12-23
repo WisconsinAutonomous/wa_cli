@@ -11,10 +11,10 @@ import pathlib
 def run_run(args):
     """The run command will spin up a Docker container that runs a python script with the desired image.
 
-    The use case for the start command is when we'd like to run a :code:`wa_simulator` script with a certain
+    The use case for the start command is when we'd like to run a `wa_simulator` script with a certain
     operating system configuration or in a way that's distributable across computers. Everyone's setup is different,
-    i.e. OS, development environment, packages installed. Using Docker, you can simply run :code:`wasim docker start ...`
-    and run :code:`wa_simulator` agnostic from your local system.
+    i.e. OS, development environment, packages installed. Using Docker, you can simply run `wasim docker start ...`
+    and run `wa_simulator` agnostic from your local system.
 
     The start command requires one argument: a python script to run in the container.
     The python script is the actual file we'll run from within the
@@ -27,90 +27,89 @@ def run_run(args):
     the command line.
 
     JSON Settings:
-        *   :code:`Container Name` (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to "wasim-docker".
 
-        * :code:`Image` (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to "wiscauto/wa_simulator:latest".
+        *   `Container Name` (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to "wasim-docker".
 
-        * :code:`Data` (list, optional): The folder that has all of the data files that will be used in the simulation. If you're familiar with docker, these will become `volumes <https://docs.docker.com/storage/volumes/>_`. By default, no volumes will be created if ``Data`` is left empty. Each entry in the ``Data`` list will be made a ``volumes`` and may have the following attributes:
+        * `Image` (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to "wiscauto/wa_simulator:latest".
 
-            * ``Host Path`` (str, required): The path to the local folder that will be copied to the container. If ``Host Path Is Relative To JSON`` is not set to True (see below), it will be assumed as a global path
+        * `Data` (list, optional): The folder that has all of the data files that will be used in the simulation. If you're familiar with docker, these will become [volumes](https://docs.docker.com/storage/volumes/). By default, no volumes will be created if `Data` is left empty. Each entry in the `Data` list will be made a `volumes` and may have the following attributes:
 
-            * ``Host Path Is Relative To JSON`` (bool, optional): If set to True, the ``Host Path`` entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.
+            * `Host Path` (str, required): The path to the local folder that will be copied to the container. If `Host Path Is Relative To JSON` is not set to True (see below), it will be assumed as a global path
 
-            * ``Container Path`` (str, optional): The path in the container to link the host path to. Defaults to ``/root/<file/folder name>``.
+            * `Host Path Is Relative To JSON` (bool, optional): If set to True, the `Host Path` entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.
 
-        * :code:`Port` (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.
+            * `Container Path` (str, optional): The path in the container to link the host path to. Defaults to `/root/<file/folder name>`.
 
-        * :code:`Network` (dict, optional): The network that the container should use for communication. See Docker `networks <https://docs.docker.com/network>_`. The ``Network`` dict must include a ``Name``, representing the name of the network, and optionally an ``IPv4`` field, representing the static ip to assign to the container. If no ``IPv4`` field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because ``Name`` hasn't been created, the submask will be generated from ``IPv4``.
+        * `Port` (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.
+
+        * `Network` (dict, optional): The network that the container should use for communication. See Docker [networks](https://docs.docker.com/network). The `Network` dict must include a `Name`, representing the name of the network, and optionally an `IPv4` field, representing the static ip to assign to the container. If no `IPv4` field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because `Name` hasn't been created, the submask will be generated from `IPv4`.
 
     Example JSON file:
 
-    .. highlight:: javascript
-    .. code-block:: javascript
+    ```json
+    {
+        "Name": "Demo bridge",
+        "Type": "Bridge",
 
-        {
-            "Name": "Demo bridge",
-            "Type": "Bridge",
-
-            "Container Name": "wasim-docker",
-            "Image": "wiscauto/wa_simulator:latest",
-            "Data": [
-                {
-                    "Path": "../data",
-                    "Path Is Relative To JSON": true
-                }
-            ],
-            "Network": {
-                "Name": "wa",
-                "IPv4": "172.30.0.3"
+        "Container Name": "wasim-docker",
+        "Image": "wiscauto/wa_simulator:latest",
+        "Data": [
+            {
+                "Path": "../data",
+                "Path Is Relative To JSON": true
             }
+        ],
+        "Network": {
+            "Name": "wa",
+            "IPv4": "172.30.0.3"
         }
+    }
+    ```
 
     Example cli commands:
 
-    .. highlight:: bash
-    .. code-block:: bash
+    ```bash
+    # ---------
+    # With JSON
+    # ---------
 
-        # ---------
-        # With JSON
-        # ---------
+    # Run from within wa_simulator/demos/bridge
+    wasim docker start --json demo_bridge.json demo_bridge_server.py
 
-        # Run from within wa_simulator/demos/bridge
-        wasim docker start --json demo_bridge.json demo_bridge_server.py
+    # With more verbosity
+    wasim -vv docker start --json demo_bridge.json demo_bridge_server.py
 
-        # With more verbosity
-        wasim -vv docker start --json demo_bridge.json demo_bridge_server.py
+    # With some script arguments
+    wasim -vv docker start --json demo_bridge.json demo_bridge_server.py --step_size 2e-3
 
-        # With some script arguments
-        wasim -vv docker start --json demo_bridge.json demo_bridge_server.py --step_size 2e-3
+    # ------------
+    # Without JSON
+    # ------------
 
-        # ------------
-        # Without JSON
-        # ------------
+    # Run from within wa_simulator/demos/bridge
+    # Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json
+    # This should be used to communicate with a client running on the host
+    wasim docker start \\
+            --name wasim-docker \\
+            --image wiscauto/wa_simulator \\
+            --data "../data:/root/data" \\
+            --data "/usr/local:/usr/local" \\ # Each entry serves as a new volume
+            --port "5555:5555" \\
+            demo_bridge_server.py --step_size 2e-3
 
-        # Run from within wa_simulator/demos/bridge
-        # Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json
-        # This should be used to communicate with a client running on the host
-        wasim docker start \\
-                --name wasim-docker \\
-                --image wiscauto/wa_simulator \\
-                --data "../data:/root/data" \\
-                --data "/usr/local:/usr/local" \\ # Each entry serves as a new volume
-                --port "5555:5555" \\
-                demo_bridge_server.py --step_size 2e-3
+    # Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json
+    # This should be used to communicate with another client in a container
+    wasim docker start \\
+            --name wasim-docker \\
+            --image wiscauto/wa_simulator \\
+            --data "../data:/root/data" \\
+            --data "/usr/local:/usr/local" \\ # Each entry serves as a new volume
+            --network "wa" \\
+            demo_bridge_server.py --step_size 2e-3
 
-        # Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json
-        # This should be used to communicate with another client in a container
-        wasim docker start \\
-                --name wasim-docker \\
-                --image wiscauto/wa_simulator \\
-                --data "../data:/root/data" \\
-                --data "/usr/local:/usr/local" \\ # Each entry serves as a new volume
-                --network "wa" \\
-                demo_bridge_server.py --step_size 2e-3
-
-        # Same thing as above, but leverages defaults
-        wasim -vv docker start demo_bridge_server.py --step_size 2e-3
+    # Same thing as above, but leverages defaults
+    wasim -vv docker start demo_bridge_server.py --step_size 2e-3
+    ```
     """
     LOGGER.debug("Running 'docker start' entrypoint...")
 
@@ -283,10 +282,10 @@ def run_run(args):
             raise e
 
 def init(subparser):
-    """Initializer method for the :code:`sim` entrypoint.
+    """Initializer method for the `sim` entrypoint.
 
-    The entrypoint serves as a mechanism for running containers with :code:`wa_simulator`. It may be
-    desireable to have a containerized system for running :code:`wa_simulator`; for instance, if a script
+    The entrypoint serves as a mechanism for running containers with `wa_simulator`. It may be
+    desireable to have a containerized system for running `wa_simulator`; for instance, if a script
     requiries a certain package, the Docker image could be shipped without needing to install the package
     on a system locally. The scalability of using Docker over installing packages on a system is much greater.
 
@@ -298,7 +297,8 @@ def init(subparser):
         wa sim -h
 
     Current subcommands:
-        * :code:`run`: Spins up a container and runs a python script in the created container.
+
+        - `run`: Spins up a container and runs a python script in the created container.
     """
     LOGGER.debug("Running 'sim' entrypoint...")
 

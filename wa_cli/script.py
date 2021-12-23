@@ -82,13 +82,14 @@ def run_license(args):
     LOGGER.info("Finished running licenseheaders script.")
 
 def init(subparser):
-    """Initializer method for the :code:`script` entrypoint.
+    """Initializer method for the `script` entrypoint.
 
     This entrypoint serves as a mechanism for running various scripts meant for members of the
     Wisconsin Autonomous student organization.
 
     Current subcommands:
-        - :code:`license`: Automatically adds a license headers to files in a directory
+
+        - `license`: Automatically adds a license headers to files in a directory
     """
 
     # Create some entrypoints for additional commands
