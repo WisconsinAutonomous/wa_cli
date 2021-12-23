@@ -91,3 +91,35 @@ nosubcommands:
 nodescription:
 ---
 ```
+
+### `wiki`
+
+```{autosimple} wa_cli.wiki.init
+```
+
+```{argparse}
+---
+module: wa_cli.wa
+func: init
+prog: wa
+path: wiki
+nosubcommands:
+nodescription:
+---
+```
+
+#### `wiki run`
+
+```{autosimple} wa_cli.wiki.run_post
+```
+
+```{argparse}
+---
+module: wa_cli.wa
+func: init
+prog: wa
+path: wiki post
+nosubcommands:
+nodescription:
+---
+```
