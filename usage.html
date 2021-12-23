@@ -5,7 +5,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
 
     <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
-        <title>Usage - Wisconsin Autonomous Command Line Interface 0.0.6 documentation</title>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.0.7 documentation</title>
       <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
     <link rel="stylesheet" href="_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
@@ -103,7 +103,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.0.6 documentation</div></a>
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.0.7 documentation</div></a>
     </div>
     <div class="header-right">
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
@@ -272,23 +272,19 @@ use when spinning up the container. If a JSON configuration file is not provided
 via the command line. There are many default values, so not all configurations are necessarily needed through
 the command line.</p>
 <p>JSON Settings:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>*   `Container Name` (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to "wasim-docker".
-
-* `Image` (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to "wiscauto/wa_simulator:latest".
-
-* `Data` (list, optional): The folder that has all of the data files that will be used in the simulation. If you're familiar with docker, these will become [volumes](https://docs.docker.com/storage/volumes/). By default, no volumes will be created if `Data` is left empty. Each entry in the `Data` list will be made a `volumes` and may have the following attributes:
-
-    * `Host Path` (str, required): The path to the local folder that will be copied to the container. If `Host Path Is Relative To JSON` is not set to True (see below), it will be assumed as a global path
-
-    * `Host Path Is Relative To JSON` (bool, optional): If set to True, the `Host Path` entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.
-
-    * `Container Path` (str, optional): The path in the container to link the host path to. Defaults to `/root/&lt;file/folder name&gt;`.
-
-* `Port` (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.
-
-* `Network` (dict, optional): The network that the container should use for communication. See Docker [networks](https://docs.docker.com/network). The `Network` dict must include a `Name`, representing the name of the network, and optionally an `IPv4` field, representing the static ip to assign to the container. If no `IPv4` field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because `Name` hasn't been created, the submask will be generated from `IPv4`.
-</pre></div>
-</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Container</span> <span class="pre">Name</span></code> (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to “wasim-docker”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Image</span></code> (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to “wiscauto/wa_simulator:latest”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Data</span></code> (list, optional): The folder that has all of the data files that will be used in the simulation. If you’re familiar with docker, these will become <a class="reference external" href="https://docs.docker.com/storage/volumes/">volumes</a>. By default, no volumes will be created if <code class="docutils literal notranslate"><span class="pre">Data</span></code> is left empty. Each entry in the <code class="docutils literal notranslate"><span class="pre">Data</span></code> list will be made a <code class="docutils literal notranslate"><span class="pre">volumes</span></code> and may have the following attributes:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span></code> (str, required): The path to the local folder that will be copied to the container. If <code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span> <span class="pre">Is</span> <span class="pre">Relative</span> <span class="pre">To</span> <span class="pre">JSON</span></code> is not set to True (see below), it will be assumed as a global path</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span> <span class="pre">Is</span> <span class="pre">Relative</span> <span class="pre">To</span> <span class="pre">JSON</span></code> (bool, optional): If set to True, the <code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span></code> entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Container</span> <span class="pre">Path</span></code> (str, optional): The path in the container to link the host path to. Defaults to <code class="docutils literal notranslate"><span class="pre">/root/&lt;file/folder</span> <span class="pre">name&gt;</span></code>.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Port</span></code> (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Network</span></code> (dict, optional): The network that the container should use for communication. See Docker <a class="reference external" href="https://docs.docker.com/network">networks</a>. The <code class="docutils literal notranslate"><span class="pre">Network</span></code> dict must include a <code class="docutils literal notranslate"><span class="pre">Name</span></code>, representing the name of the network, and optionally an <code class="docutils literal notranslate"><span class="pre">IPv4</span></code> field, representing the static ip to assign to the container. If no <code class="docutils literal notranslate"><span class="pre">IPv4</span></code> field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because <code class="docutils literal notranslate"><span class="pre">Name</span></code> hasn’t been created, the submask will be generated from <code class="docutils literal notranslate"><span class="pre">IPv4</span></code>.</p></li>
+</ul>
 <p>Example JSON file:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">"Name"</span><span class="p">:</span> <span class="s2">"Demo bridge"</span><span class="p">,</span>
