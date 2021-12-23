@@ -28,21 +28,21 @@ def run_run(args):
 
     JSON Settings:
 
-        *   `Container Name` (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to "wasim-docker".
+    - `Container Name` (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to "wasim-docker".
 
-        * `Image` (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to "wiscauto/wa_simulator:latest".
+    - `Image` (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to "wiscauto/wa_simulator:latest".
 
-        * `Data` (list, optional): The folder that has all of the data files that will be used in the simulation. If you're familiar with docker, these will become [volumes](https://docs.docker.com/storage/volumes/). By default, no volumes will be created if `Data` is left empty. Each entry in the `Data` list will be made a `volumes` and may have the following attributes:
+    - `Data` (list, optional): The folder that has all of the data files that will be used in the simulation. If you're familiar with docker, these will become [volumes](https://docs.docker.com/storage/volumes/). By default, no volumes will be created if `Data` is left empty. Each entry in the `Data` list will be made a `volumes` and may have the following attributes:
 
-            * `Host Path` (str, required): The path to the local folder that will be copied to the container. If `Host Path Is Relative To JSON` is not set to True (see below), it will be assumed as a global path
+        - `Host Path` (str, required): The path to the local folder that will be copied to the container. If `Host Path Is Relative To JSON` is not set to True (see below), it will be assumed as a global path
 
-            * `Host Path Is Relative To JSON` (bool, optional): If set to True, the `Host Path` entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.
+        - `Host Path Is Relative To JSON` (bool, optional): If set to True, the `Host Path` entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.
 
-            * `Container Path` (str, optional): The path in the container to link the host path to. Defaults to `/root/<file/folder name>`.
+        - `Container Path` (str, optional): The path in the container to link the host path to. Defaults to `/root/<file/folder name>`.
 
-        * `Port` (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.
+    - `Port` (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.
 
-        * `Network` (dict, optional): The network that the container should use for communication. See Docker [networks](https://docs.docker.com/network). The `Network` dict must include a `Name`, representing the name of the network, and optionally an `IPv4` field, representing the static ip to assign to the container. If no `IPv4` field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because `Name` hasn't been created, the submask will be generated from `IPv4`.
+    - `Network` (dict, optional): The network that the container should use for communication. See Docker [networks](https://docs.docker.com/network). The `Network` dict must include a `Name`, representing the name of the network, and optionally an `IPv4` field, representing the static ip to assign to the container. If no `IPv4` field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because `Name` hasn't been created, the submask will be generated from `IPv4`.
 
     Example JSON file:
 
