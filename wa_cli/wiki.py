@@ -35,7 +35,7 @@ def run_post(args):
 
     ## See Also
 
-    Stay up to date with our technical info by following our [blog](https://www.wisconsinautonomous.org/blog).
+    Stay up to date with our technical info by following our [blog](https://wa.wisc.edu/blog).
 
     Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagram](https://www.instagram.com/wisconsinautonomous/), and [LinkedIn](https://www.linkedin.com/company/wisconsin-autonomous/about/)!
 
@@ -66,7 +66,7 @@ Contact [{author}](mailto:{email}) for any questions or concerns regarding the c
 
 ## See Also
 
-Stay up to date with our technical info by following our [blog](https://www.wa.wisc.edu/blog).
+Stay up to date with our technical info by following our [blog](https://wa.wisc.edu/blog).
 
 Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagram](https://www.instagram.com/wisconsinautonomous/), and [LinkedIn](https://www.linkedin.com/company/wisconsin-autonomous/about/)!
 
