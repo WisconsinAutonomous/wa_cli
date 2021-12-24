@@ -5,7 +5,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
 
     <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
-        <title>Usage - Wisconsin Autonomous Command Line Interface 0.0.8 documentation</title>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.0.9 documentation</title>
       <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
     <link rel="stylesheet" href="_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
@@ -103,7 +103,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.0.8 documentation</div></a>
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.0.9 documentation</div></a>
     </div>
     <div class="header-right">
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
@@ -251,19 +251,21 @@ on a system locally. The scalability of using Docker over installing packages on
 </div>
 <p>Current subcommands:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- `run`: Spins up a container and runs a python script in the created container.
+
+- `novnc`: Starts up a novnc container so gui windows can be visualized.
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">sim</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">}</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">sim</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">,</span><span class="n">novnc</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
 <section id="sim-run">
 <h4><code class="docutils literal notranslate"><span class="pre">sim</span> <span class="pre">run</span></code><a class="headerlink" href="#sim-run" title="Permalink to this headline">¶</a></h4>
 <p>The run command will spin up a Docker container that runs a python script with the desired image.</p>
-<p>The use case for the start command is when we’d like to run a <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> script with a certain
+<p>The use case for the run command is when we’d like to run a <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> script with a certain
 operating system configuration or in a way that’s distributable across computers. Everyone’s setup is different,
-i.e. OS, development environment, packages installed. Using Docker, you can simply run <code class="docutils literal notranslate"><span class="pre">wasim</span> <span class="pre">docker</span> <span class="pre">start</span> <span class="pre">...</span></code>
+i.e. OS, development environment, packages installed. Using Docker, you can simply run <code class="docutils literal notranslate"><span class="pre">wa</span> <span class="pre">sim</span> <span class="pre">run...</span></code>
 and run <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> agnostic from your local system.</p>
-<p>The start command requires one argument: a python script to run in the container.
+<p>The run command requires one argument: a python script to run in the container.
 The python script is the actual file we’ll run from within the
 container. After the python script, you may add arguments that will get passed to the script
 when it’s run in the container.</p>
@@ -311,13 +313,13 @@ the command line.</p>
 <span class="c1"># ---------</span>
 
 <span class="c1"># Run from within wa_simulator/demos/bridge</span>
-wasim docker start --json demo_bridge.json demo_bridge_server.py
+wa sim run --json demo_bridge.json demo_bridge_server.py
 
 <span class="c1"># With more verbosity</span>
-wasim -vv docker start --json demo_bridge.json demo_bridge_server.py
+wa -vv sim run --json demo_bridge.json demo_bridge_server.py
 
 <span class="c1"># With some script arguments</span>
-wasim -vv docker start --json demo_bridge.json demo_bridge_server.py --step_size 2e-3
+wa -vv sim run --json demo_bridge.json demo_bridge_server.py --step_size 2e-3
 
 <span class="c1"># ------------</span>
 <span class="c1"># Without JSON</span>
@@ -326,7 +328,7 @@ wasim -vv docker start --json demo_bridge.json demo_bridge_server.py --step_size
 <span class="c1"># Run from within wa_simulator/demos/bridge</span>
 <span class="c1"># Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json</span>
 <span class="c1"># This should be used to communicate with a client running on the host</span>
-wasim docker start <span class="se">\</span>
+wa sim run <span class="se">\</span>
         --name wasim-docker <span class="se">\</span>
         --image wiscauto/wa_simulator <span class="se">\</span>
         --data <span class="s2">"../data:/root/data"</span> <span class="se">\</span>
@@ -336,7 +338,7 @@ wasim docker start <span class="se">\</span>
 
 <span class="c1"># Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json</span>
 <span class="c1"># This should be used to communicate with another client in a container</span>
-wasim docker start <span class="se">\</span>
+wa sim run <span class="se">\</span>
         --name wasim-docker <span class="se">\</span>
         --image wiscauto/wa_simulator <span class="se">\</span>
         --data <span class="s2">"../data:/root/data"</span> <span class="se">\</span>
@@ -345,11 +347,12 @@ wasim docker start <span class="se">\</span>
         demo_bridge_server.py --step_size 2e-3
 
 <span class="c1"># Same thing as above, but leverages defaults</span>
-wasim -vv docker start demo_bridge_server.py --step_size 2e-3
+wa -vv sim run demo_bridge_server.py --step_size 2e-3
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">sim</span> <span class="n">run</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">json</span> <span class="n">JSON</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">image</span> <span class="n">IMAGE</span><span class="p">]</span>
-                  <span class="p">[</span><span class="o">--</span><span class="n">data</span> <span class="n">DATA</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">data</span> <span class="n">DATA</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">env</span> <span class="n">ENVIRONMENT</span><span class="p">]</span>
+                  <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
                   <span class="n">script</span> <span class="o">...</span>
 </pre></div>
 </div>
@@ -384,6 +387,10 @@ wasim -vv docker start demo_bridge_server.py --step_size 2e-3
 </dd>
 <dt><kbd>--port</kbd></dt>
 <dd><p>Ports to expose from the container.</p>
+<p>Default: []</p>
+</dd>
+<dt><kbd>--env</kbd></dt>
+<dd><p>Environment variables.</p>
 <p>Default: []</p>
 </dd>
 <dt><kbd>--network</kbd></dt>
