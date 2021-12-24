@@ -28,12 +28,12 @@ The entrypoint for the Wisconsin Autonomous CLI tool is `wa`.
 The main parser will have a few options, such as verbosity or a help menu.
 For the most part, the entrypoint will be used to access subparsers,
 where each subparser implements it's own unique logic. Examples of
-subparsers may be `sim` to do things related to `wa_simulator`, or
+subparsers may be `docker` to do things with Docker containers, or
 `script` to run helper scripts such as our license tool or code styling.
 """
 # Command imports
 import wa_cli.script as script
-import wa_cli.sim as sim
+import wa_cli.docker_cli as docker_cli
 import wa_cli.wiki as wiki
 
 # Utility imports
@@ -56,7 +56,7 @@ def init():
     # Initialize the subparsers
     subparsers = parser.add_subparsers()
     script.init(subparsers.add_parser("script", description="Entrypoint for various generic scripts useful to Wisconsin Autonomous members"))
-    sim.init(subparsers.add_parser("sim", description="Entrypoint for WA simulator related commands"))
+    docker_cli.init(subparsers.add_parser("docker", description="Entrypoint for Docker related commands"))
     wiki.init(subparsers.add_parser("wiki", description="Entrypoint for internal wiki related commands"))
 
     return parser

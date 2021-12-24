@@ -8,7 +8,7 @@ from wa_cli.utils.logger import LOGGER
 def run_post(args):
     """The `post` command will create a post template for the Wisconsin Autonomous Wiki.
 
-    The Wiki is located at [WisconsinAutonomous.github.io](WisconsinAutonomous.github.io) and
+    The Wiki is located at [WisconsinAutonomous.github.io](https://WisconsinAutonomous.github.io) and
     is a jekyll site that creates website pages from markdown code.
 
     For information on creating a new post, see [this page](https://wisconsinautonomous.github.io/posts/writing-a-new-post/).
@@ -105,7 +105,7 @@ def init(subparser):
     """Initializer method for the `wiki` entrypoint.
 
     This entrypoint serves as a mechanism for running helpers that relate to
-    the wiki website at [WisconsinAutonomous.github.io](WisconsinAutonomous.github.io).
+    the wiki website at [WisconsinAutonomous.github.io](https://WisconsinAutonomous.github.io).
 
     Current subcommands:
 
