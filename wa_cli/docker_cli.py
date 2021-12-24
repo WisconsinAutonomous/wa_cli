@@ -1,29 +1,3 @@
-#
-# MIT License
-#
-# Copyright (c) 2018-2021 Wisconsin Autonomous
-#
-# See https://wa.wisc.edu
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-#
-
 # Imports from wa_cli
 from wa_cli.utils.logger import LOGGER
 from wa_cli.utils.files import file_exists, get_resolved_path
@@ -240,6 +214,22 @@ def run_run(args, run_cmd="/bin/bash"):
             raise e
 
 def run_novnc(args):
+    """Command to spin up a `novnc` docker container to allow the visualization of GUI apps in docker
+
+    [noVNC](https://novnc.com/info.html) is a tool for using [VNC](https://en.wikipedia.org/wiki/Virtual_Network_Computing) in a browser.
+    [docker-novnc](https://github.com/theasp/docker-novnc) is a docker container that's been created that runs novnc and can be used
+    to visualize gui applications for other docker containers. There are a few requirements to ensure gui apps are correctly visualized, as seen below:
+
+    - `network`: Docker networks are used to help containers communicate with other containers or with the host. When spinning up a container that you want to 
+    visualize a gui app with novnc, you will need to make sure it is connected to the same network as the novnc container, i.e. make sure the original container is 
+    connected to the same network that you passed to `--network` (or the default `wa` network).
+    - `port`: The novnc instance can be visualized in your browser at [http://localhost:8080/vnc_auto.html](http://localhost:8080/vnc_auto.html). As seen in the url,
+    the application is hosted on port 8080. This port must then be exposed from the container to the host. This is again done by the `wa docker novnc` command.
+    - `DISPLAY`: The [DISPLAY](https://askubuntu.com/questions/432255/what-is-the-display-environment-variable) environment variable is used to help display
+    applications in X window systems (used by any linux based container, like the ones we use). To make sure the gui apps are visualized in novnc when the aforementioned
+    requirements are setup, you need to make sure the `DISPLAY` variable is set correctly. The variable should be set to `novnc:0.0` (assuming the novnc container that has
+    been setup is named 'novnc').
+    """
     LOGGER.debug("Running 'docker novnc' entrypoint...")
 
     # Set the defaults
