@@ -152,9 +152,11 @@ def run_run(args):
 
     # Ports
     config["ports"] = {}
-    if args.port != "":
-        port = args.port if ":" in args.port else f"{args.port}:{args.port}"
-        config["ports"] = build_port_bindings([port])
+    ports = []
+    for port in args.port:
+        port = port if ":" in port else f"{port}:{port}"
+        ports.append(port)
+    config["ports"] = build_port_bindings(ports)
 
     # Networks
     config["network"] = args.network
@@ -269,7 +271,7 @@ def run_run(args):
 
             # Run the command
             running_container = client.containers.run(
-                config["image"], "/bin/bash", volumes=config["volumes"], ports=config["ports"], remove=True, detach=True, tty=True, name=config["name"], auto_remove=True)
+                    config["image"], "/bin/bash", volumes=config["volumes"], ports=config["ports"], remove=True, detach=True, tty=True, name=config["name"], auto_remove=True)
             if config["network"] != "":
                 client.networks.get(config["network"]).connect(running_container, ipv4_address=config["ip"]) # noqa
             result = running_container.exec_run(cmd)
@@ -314,7 +316,7 @@ def init(subparser):
     run.add_argument("--name", type=str, help="Name of the container.", default="wasim-docker")
     run.add_argument("--image", type=str, help="Name of the image to run.", default="wiscauto/wa_simulator:latest")
     run.add_argument("--data", type=str, action="append", help="Data to pass to the container as a Docker volume. Multiple data entries can be provided.", default=[])
-    run.add_argument("--port", type=str, help="Ports to expose from the container.", default="")
+    run.add_argument("--port", type=str, action="append", help="Ports to expose from the container.", default=[])
     run.add_argument("--network", type=str, help="The network to communicate with.", default="")
     run.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'. Used as the server ip.", default="172.20.0.3")
     run.add_argument("script", help="The script to run up in the Docker container")
