@@ -10,3 +10,4 @@ wa_cli
 wa_simulator
 ipython
 dill
+docker
