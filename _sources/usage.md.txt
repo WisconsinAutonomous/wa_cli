@@ -60,9 +60,9 @@ nodescription:
 ---
 ```
 
-### `sim`
+### `docker`
 
-```{autosimple} wa_cli.sim.init
+```{autosimple} wa_cli.docker_cli.init
 ```
 
 ```{argparse}
@@ -70,15 +70,15 @@ nodescription:
 module: wa_cli.wa
 func: init
 prog: wa
-path: sim
+path: docker
 nosubcommands:
 nodescription:
 ---
 ```
 
-#### `sim run`
+#### `docker run`
 
-```{autosimple} wa_cli.sim.run_run
+```{autosimple} wa_cli.docker_cli.run_run
 ```
 
 ```{argparse}
@@ -86,7 +86,23 @@ nodescription:
 module: wa_cli.wa
 func: init
 prog: wa
-path: sim run
+path: docker run
+nosubcommands:
+nodescription:
+---
+```
+
+#### `docker novnc`
+
+```{autosimple} wa_cli.docker_cli.run_novnc
+```
+
+```{argparse}
+---
+module: wa_cli.wa
+func: init
+prog: wa
+path: docker novnc
 nosubcommands:
 nodescription:
 ---
@@ -108,7 +124,7 @@ nodescription:
 ---
 ```
 
-#### `wiki run`
+#### `wiki post`
 
 ```{autosimple} wa_cli.wiki.run_post
 ```

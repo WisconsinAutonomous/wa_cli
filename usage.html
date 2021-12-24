@@ -5,7 +5,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
 
     <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
-        <title>Usage - Wisconsin Autonomous Command Line Interface 0.0.9 documentation</title>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.1.0 documentation</title>
       <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
     <link rel="stylesheet" href="_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
@@ -103,7 +103,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.0.9 documentation</div></a>
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
@@ -158,7 +158,7 @@
 </style><section id="wa">
 <h2><code class="docutils literal notranslate"><span class="pre">wa</span></code><a class="headerlink" href="#wa" title="Permalink to this headline">¶</a></h2>
 <p>The root entrypoint for the <code class="docutils literal notranslate"><span class="pre">wa_cli</span></code> is <code class="docutils literal notranslate"><span class="pre">wa</span></code>. This the first command you need to access the CLI. All subsequent subcommands succeed <code class="docutils literal notranslate"><span class="pre">wa</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">]</span> <span class="p">{</span><span class="n">script</span><span class="p">,</span><span class="n">sim</span><span class="p">,</span><span class="n">wiki</span><span class="p">}</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">]</span> <span class="p">{</span><span class="n">script</span><span class="p">,</span><span class="n">docker</span><span class="p">,</span><span class="n">wiki</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
 <section id="Named Arguments">
@@ -236,124 +236,77 @@ Wisconsin Autonomous student organization.</p>
 </section>
 </section>
 </section>
-<section id="sim">
-<h3><code class="docutils literal notranslate"><span class="pre">sim</span></code><a class="headerlink" href="#sim" title="Permalink to this headline">¶</a></h3>
-<p>Initializer method for the <code class="docutils literal notranslate"><span class="pre">sim</span></code> entrypoint.</p>
-<p>The entrypoint serves as a mechanism for running containers with <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code>. It may be
-desireable to have a containerized system for running <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code>; for instance, if a script
+<section id="docker">
+<h3><code class="docutils literal notranslate"><span class="pre">docker</span></code><a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h3>
+<p>Initializer method for the <code class="docutils literal notranslate"><span class="pre">docker</span></code> entrypoint.</p>
+<p>The entrypoint serves as a mechanism for running containers with <code class="docutils literal notranslate"><span class="pre">docker</span></code>. A common
+desireable usecase for simulations is to have it run in a containerized system; for instance, if a script
 requiries a certain package, the Docker image could be shipped without needing to install the package
 on a system locally. The scalability of using Docker over installing packages on a system is much greater.</p>
+<p>There are a few ports that may be exposed, and the <em>typical</em> purpose of each port (for wa) is outlined below:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">8080</span></code>: <code class="docutils literal notranslate"><span class="pre">novnc</span></code> port to display gui apps in a browser.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">8888</span></code>: <code class="docutils literal notranslate"><span class="pre">rosboard</span></code> visualizer. See <a class="reference external" href="https://github.com/dheera/rosboard">their github</a>. This is used for visualizing ROS data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">5555</span></code>: Used by <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> to communicate data over a bridge or to another external entity</p></li>
+</ul>
 <p>To see specific commands that are available, run the following command:</p>
 <p>.. highlight:: bash
 .. code-block:: bash</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wa sim -h
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wa docker -h
 </pre></div>
 </div>
 <p>Current subcommands:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- `run`: Spins up a container and runs a python script in the created container.
-
-- `novnc`: Starts up a novnc container so gui windows can be visualized.
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">run</span></code>: Spins up a container and runs a python script in the created container.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">novnc</span></code>: Starts up a novnc container so gui windows can be visualized.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">,</span><span class="n">novnc</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">sim</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">,</span><span class="n">novnc</span><span class="p">}</span> <span class="o">...</span>
-</pre></div>
-</div>
-<section id="sim-run">
-<h4><code class="docutils literal notranslate"><span class="pre">sim</span> <span class="pre">run</span></code><a class="headerlink" href="#sim-run" title="Permalink to this headline">¶</a></h4>
+<section id="docker-run">
+<h4><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code><a class="headerlink" href="#docker-run" title="Permalink to this headline">¶</a></h4>
 <p>The run command will spin up a Docker container that runs a python script with the desired image.</p>
-<p>The use case for the run command is when we’d like to run a <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> script with a certain
+<p>The use case for the run command is when we’d like to run a simulation script with a certain
 operating system configuration or in a way that’s distributable across computers. Everyone’s setup is different,
-i.e. OS, development environment, packages installed. Using Docker, you can simply run <code class="docutils literal notranslate"><span class="pre">wa</span> <span class="pre">sim</span> <span class="pre">run...</span></code>
-and run <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> agnostic from your local system.</p>
+i.e. OS, development environment, packages installed. Using Docker, you can simply run <code class="docutils literal notranslate"><span class="pre">wa</span> <span class="pre">docker</span> <span class="pre">run...</span></code>
+and run any script agnostic from your local system.</p>
 <p>The run command requires one argument: a python script to run in the container.
 The python script is the actual file we’ll run from within the
 container. After the python script, you may add arguments that will get passed to the script
 when it’s run in the container.</p>
-<p>Optionally, you may provide a JSON configuration file. The JSON file defines various settings we’ll
-use when spinning up the container. If a JSON configuration file is not provided, you must pass these options
-via the command line. There are many default values, so not all configurations are necessarily needed through
-the command line.</p>
-<p>JSON Settings:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Container</span> <span class="pre">Name</span></code> (str, optional): Identifies the name that should be used for the container. If no name is passed, JSON will provide one. Defaults to “wasim-docker”.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Image</span></code> (str, optional): The image the container will use. If the image has not been downloaded, it will be fetched at runtime. Defaults to “wiscauto/wa_simulator:latest”.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Data</span></code> (list, optional): The folder that has all of the data files that will be used in the simulation. If you’re familiar with docker, these will become <a class="reference external" href="https://docs.docker.com/storage/volumes/">volumes</a>. By default, no volumes will be created if <code class="docutils literal notranslate"><span class="pre">Data</span></code> is left empty. Each entry in the <code class="docutils literal notranslate"><span class="pre">Data</span></code> list will be made a <code class="docutils literal notranslate"><span class="pre">volumes</span></code> and may have the following attributes:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span></code> (str, required): The path to the local folder that will be copied to the container. If <code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span> <span class="pre">Is</span> <span class="pre">Relative</span> <span class="pre">To</span> <span class="pre">JSON</span></code> is not set to True (see below), it will be assumed as a global path</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span> <span class="pre">Is</span> <span class="pre">Relative</span> <span class="pre">To</span> <span class="pre">JSON</span></code> (bool, optional): If set to True, the <code class="docutils literal notranslate"><span class="pre">Host</span> <span class="pre">Path</span></code> entry will be evaluated as if it were relative to the location of the JSON file provided. Defaults to False.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Container</span> <span class="pre">Path</span></code> (str, optional): The path in the container to link the host path to. Defaults to <code class="docutils literal notranslate"><span class="pre">/root/&lt;file/folder</span> <span class="pre">name&gt;</span></code>.</p></li>
-</ul>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Port</span></code> (str, optional): The port to expose between the docker container and the host machine. This is the port that the server and client may communicate over. Ensure this is consistent with both your server and client code, as this will be the only port exposed. Default is 5555.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Network</span></code> (dict, optional): The network that the container should use for communication. See Docker <a class="reference external" href="https://docs.docker.com/network">networks</a>. The <code class="docutils literal notranslate"><span class="pre">Network</span></code> dict must include a <code class="docutils literal notranslate"><span class="pre">Name</span></code>, representing the name of the network, and optionally an <code class="docutils literal notranslate"><span class="pre">IPv4</span></code> field, representing the static ip to assign to the container. If no <code class="docutils literal notranslate"><span class="pre">IPv4</span></code> field is provided, a default value of 172.20.0.3 will be used. Further, if a network must be created because <code class="docutils literal notranslate"><span class="pre">Name</span></code> hasn’t been created, the submask will be generated from <code class="docutils literal notranslate"><span class="pre">IPv4</span></code>.</p></li>
-</ul>
-<p>Example JSON file:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">"Name"</span><span class="p">:</span> <span class="s2">"Demo bridge"</span><span class="p">,</span>
-    <span class="nt">"Type"</span><span class="p">:</span> <span class="s2">"Bridge"</span><span class="p">,</span>
-
-    <span class="nt">"Container Name"</span><span class="p">:</span> <span class="s2">"wasim-docker"</span><span class="p">,</span>
-    <span class="nt">"Image"</span><span class="p">:</span> <span class="s2">"wiscauto/wa_simulator:latest"</span><span class="p">,</span>
-    <span class="nt">"Data"</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nt">"Path"</span><span class="p">:</span> <span class="s2">"../data"</span><span class="p">,</span>
-            <span class="nt">"Path Is Relative To JSON"</span><span class="p">:</span> <span class="kc">true</span>
-        <span class="p">}</span>
-    <span class="p">],</span>
-    <span class="nt">"Network"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">"Name"</span><span class="p">:</span> <span class="s2">"wa"</span><span class="p">,</span>
-        <span class="nt">"IPv4"</span><span class="p">:</span> <span class="s2">"172.30.0.3"</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
 <p>Example cli commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># ---------</span>
-<span class="c1"># With JSON</span>
-<span class="c1"># ---------</span>
-
-<span class="c1"># Run from within wa_simulator/demos/bridge</span>
-wa sim run --json demo_bridge.json demo_bridge_server.py
-
-<span class="c1"># With more verbosity</span>
-wa -vv sim run --json demo_bridge.json demo_bridge_server.py
-
-<span class="c1"># With some script arguments</span>
-wa -vv sim run --json demo_bridge.json demo_bridge_server.py --step_size 2e-3
-
-<span class="c1"># ------------</span>
-<span class="c1"># Without JSON</span>
-<span class="c1"># ------------</span>
-
-<span class="c1"># Run from within wa_simulator/demos/bridge</span>
-<span class="c1"># Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run from within wa_simulator/demos/bridge</span>
+<span class="c1"># Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments</span>
 <span class="c1"># This should be used to communicate with a client running on the host</span>
-wa sim run <span class="se">\</span>
+wa docker run <span class="se">\</span>
         --name wasim-docker <span class="se">\</span>
-        --image wiscauto/wa_simulator <span class="se">\</span>
-        --data <span class="s2">"../data:/root/data"</span> <span class="se">\</span>
-        --data <span class="s2">"/usr/local:/usr/local"</span> <span class="se">\ </span><span class="c1"># Each entry serves as a new volume</span>
+        --image wiscauto/wa_simulator:latest <span class="se">\</span>
+        --network <span class="s2">"wa"</span> <span class="se">\</span>
+        --data <span class="s2">"../data:/root/data"</span> <span class="se">\ </span><span class="c1"># ':root/data' not really necessary</span>
+        --data <span class="s2">"pid_controller.py"</span> <span class="se">\ </span> <span class="c1"># Will be resolved to an absolute path automatically</span>
         --port <span class="s2">"5555:5555"</span> <span class="se">\</span>
         demo_bridge_server.py --step_size 2e-3
 
-<span class="c1"># Running wa_simulator/demos/bridge/demo_bridge_server.py using command line arguments rather than json</span>
-<span class="c1"># This should be used to communicate with another client in a container</span>
-wa sim run <span class="se">\</span>
-        --name wasim-docker <span class="se">\</span>
-        --image wiscauto/wa_simulator <span class="se">\</span>
+<span class="c1"># Or more simply, leveraging provided by 'wasim'</span>
+wa docker run <span class="se">\</span>
+        --wasim <span class="se">\</span>
         --data <span class="s2">"../data:/root/data"</span> <span class="se">\</span>
-        --data <span class="s2">"/usr/local:/usr/local"</span> <span class="se">\ </span><span class="c1"># Each entry serves as a new volume</span>
-        --network <span class="s2">"wa"</span> <span class="se">\</span>
+        --data <span class="s2">"pid_controller.py"</span> <span class="se">\</span>
         demo_bridge_server.py --step_size 2e-3
 
-<span class="c1"># Same thing as above, but leverages defaults</span>
-wa -vv sim run demo_bridge_server.py --step_size 2e-3
+<span class="c1"># Leverage defaults, but using the develop image</span>
+wa docker run <span class="se">\</span>
+        --wasim <span class="se">\</span>
+        --image wiscauto/wa_simulator:develop <span class="se">\</span>
+        --data <span class="s2">"../data:/root/data"</span> <span class="se">\</span>
+        --data <span class="s2">"pid_controller.py"</span> <span class="se">\</span>
+        demo_bridge_server.py --step_size 2e-3
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">sim</span> <span class="n">run</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">json</span> <span class="n">JSON</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">image</span> <span class="n">IMAGE</span><span class="p">]</span>
-                  <span class="p">[</span><span class="o">--</span><span class="n">data</span> <span class="n">DATA</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">env</span> <span class="n">ENVIRONMENT</span><span class="p">]</span>
-                  <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
-                  <span class="n">script</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">run</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">image</span> <span class="n">IMAGE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">data</span> <span class="n">DATA</span><span class="p">]</span>
+                     <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">env</span> <span class="n">ENVIRONMENT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span>
+                     <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">wasim</span><span class="p">]</span>
+                     <span class="n">script</span> <span class="o">...</span>
 </pre></div>
 </div>
 <section id="Positional Arguments">
@@ -370,16 +323,11 @@ wa -vv sim run demo_bridge_server.py --step_size 2e-3
 <section id="Named Arguments">
 <h5>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h5>
 <dl class="option-list">
-<dt><kbd>--json</kbd></dt>
-<dd><p>JSON file with docker configuration</p>
-</dd>
 <dt><kbd>--name</kbd></dt>
 <dd><p>Name of the container.</p>
-<p>Default: “wasim-docker”</p>
 </dd>
 <dt><kbd>--image</kbd></dt>
 <dd><p>Name of the image to run.</p>
-<p>Default: “wiscauto/wa_simulator:latest”</p>
 </dd>
 <dt><kbd>--data</kbd></dt>
 <dd><p>Data to pass to the container as a Docker volume. Multiple data entries can be provided.</p>
@@ -395,11 +343,36 @@ wa -vv sim run demo_bridge_server.py --step_size 2e-3
 </dd>
 <dt><kbd>--network</kbd></dt>
 <dd><p>The network to communicate with.</p>
-<p>Default: “”</p>
 </dd>
 <dt><kbd>--ip</kbd></dt>
 <dd><p>The static ip address to use when connecting to ‘network’. Used as the server ip.</p>
-<p>Default: “172.20.0.3”</p>
+</dd>
+<dt><kbd>--wasim</kbd></dt>
+<dd><p>Run the passed script with all the defaults for the wa_simulator</p>
+<p>Default: False</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="docker-novnc">
+<h4><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">novnc</span></code><a class="headerlink" href="#docker-novnc" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">novnc</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="Named Arguments">
+<h5>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>--name</kbd></dt>
+<dd><p>Name of the container.</p>
+<p>Default: “novnc”</p>
+</dd>
+<dt><kbd>--network</kbd></dt>
+<dd><p>The network to communicate with.</p>
+<p>Default: “wa”</p>
+</dd>
+<dt><kbd>--ip</kbd></dt>
+<dd><p>The static ip address to use when connecting to ‘network’.</p>
+<p>Default: “172.20.0.4”</p>
 </dd>
 </dl>
 </section>
@@ -409,7 +382,7 @@ wa -vv sim run demo_bridge_server.py --step_size 2e-3
 <h3><code class="docutils literal notranslate"><span class="pre">wiki</span></code><a class="headerlink" href="#wiki" title="Permalink to this headline">¶</a></h3>
 <p>Initializer method for the <code class="docutils literal notranslate"><span class="pre">wiki</span></code> entrypoint.</p>
 <p>This entrypoint serves as a mechanism for running helpers that relate to
-the wiki website at <span class="xref myst">WisconsinAutonomous.github.io</span>.</p>
+the wiki website at <a class="reference external" href="https://WisconsinAutonomous.github.io">WisconsinAutonomous.github.io</a>.</p>
 <p>Current subcommands:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- `post`: Creates a template post.
 </pre></div>
@@ -417,10 +390,10 @@ the wiki website at <span class="xref myst">WisconsinAutonomous.github.io</span>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">wiki</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">post</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
-<section id="wiki-run">
-<h4><code class="docutils literal notranslate"><span class="pre">wiki</span> <span class="pre">run</span></code><a class="headerlink" href="#wiki-run" title="Permalink to this headline">¶</a></h4>
+<section id="wiki-post">
+<h4><code class="docutils literal notranslate"><span class="pre">wiki</span> <span class="pre">post</span></code><a class="headerlink" href="#wiki-post" title="Permalink to this headline">¶</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">post</span></code> command will create a post template for the Wisconsin Autonomous Wiki.</p>
-<p>The Wiki is located at <span class="xref myst">WisconsinAutonomous.github.io</span> and
+<p>The Wiki is located at <a class="reference external" href="https://WisconsinAutonomous.github.io">WisconsinAutonomous.github.io</a> and
 is a jekyll site that creates website pages from markdown code.</p>
 <p>For information on creating a new post, see <a class="reference external" href="https://wisconsinautonomous.github.io/posts/writing-a-new-post/">this page</a>.</p>
 <p>This command a generated post template similar to the following:</p>
@@ -552,16 +525,20 @@ Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagr
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#sim"><code class="docutils literal notranslate"><span class="pre">sim</span></code></a><ul>
-<li><a class="reference internal" href="#sim-run"><code class="docutils literal notranslate"><span class="pre">sim</span> <span class="pre">run</span></code></a><ul>
+<li><a class="reference internal" href="#docker"><code class="docutils literal notranslate"><span class="pre">docker</span></code></a><ul>
+<li><a class="reference internal" href="#docker-run"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code></a><ul>
 <li><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#docker-novnc"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">novnc</span></code></a><ul>
 <li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#wiki"><code class="docutils literal notranslate"><span class="pre">wiki</span></code></a><ul>
-<li><a class="reference internal" href="#wiki-run"><code class="docutils literal notranslate"><span class="pre">wiki</span> <span class="pre">run</span></code></a><ul>
+<li><a class="reference internal" href="#wiki-post"><code class="docutils literal notranslate"><span class="pre">wiki</span> <span class="pre">post</span></code></a><ul>
 <li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
