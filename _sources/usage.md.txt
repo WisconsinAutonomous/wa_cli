@@ -108,6 +108,22 @@ nodescription:
 ---
 ```
 
+#### `docker network`
+
+```{autosimple} wa_cli.docker_cli.run_network
+```
+
+```{argparse}
+---
+module: wa_cli.wa
+func: init
+prog: wa
+path: docker network
+nosubcommands:
+nodescription:
+---
+```
+
 ### `wiki`
 
 ```{autosimple} wa_cli.wiki.init

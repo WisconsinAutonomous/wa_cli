@@ -5,7 +5,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
 
     <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
-        <title>Usage - Wisconsin Autonomous Command Line Interface 0.1.0 documentation</title>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.1.3 documentation</title>
       <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
     <link rel="stylesheet" href="_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
@@ -103,7 +103,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.1.0 documentation</div></a>
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.1.3 documentation</div></a>
     </div>
     <div class="header-right">
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
@@ -260,7 +260,7 @@ on a system locally. The scalability of using Docker over installing packages on
 <li><p><code class="docutils literal notranslate"><span class="pre">run</span></code>: Spins up a container and runs a python script in the created container.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">novnc</span></code>: Starts up a novnc container so gui windows can be visualized.</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">,</span><span class="n">novnc</span><span class="p">}</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">,</span><span class="n">novnc</span><span class="p">,</span><span class="n">network</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
 <section id="docker-run">
@@ -305,7 +305,7 @@ wa docker run <span class="se">\</span>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">run</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">image</span> <span class="n">IMAGE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">data</span> <span class="n">DATA</span><span class="p">]</span>
                      <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">env</span> <span class="n">ENVIRONMENT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span>
-                     <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">wasim</span><span class="p">]</span>
+                     <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">wasim</span> <span class="o">|</span> <span class="o">--</span><span class="n">wasim</span><span class="o">-</span><span class="n">without</span><span class="o">-</span><span class="n">novnc</span><span class="p">]</span>
                      <span class="n">script</span> <span class="o">...</span>
 </pre></div>
 </div>
@@ -348,7 +348,11 @@ wa docker run <span class="se">\</span>
 <dd><p>The static ip address to use when connecting to ‘network’. Used as the server ip.</p>
 </dd>
 <dt><kbd>--wasim</kbd></dt>
-<dd><p>Run the passed script with all the defaults for the wa_simulator</p>
+<dd><p>Run the passed script with all the defaults for the wa_simulator. Will set ‘DISPLAY’ to use novnc.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--wasim-without-novnc</kbd></dt>
+<dd><p>Run the passed script with all the defaults for the wa_simulator. Will not use novnc.</p>
 <p>Default: False</p>
 </dd>
 </dl>
@@ -356,6 +360,21 @@ wa docker run <span class="se">\</span>
 </section>
 <section id="docker-novnc">
 <h4><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">novnc</span></code><a class="headerlink" href="#docker-novnc" title="Permalink to this headline">¶</a></h4>
+<p>Command to spin up a <code class="docutils literal notranslate"><span class="pre">novnc</span></code> docker container to allow the visualization of GUI apps in docker</p>
+<p><a class="reference external" href="https://novnc.com/info.html">noVNC</a> is a tool for using <a class="reference external" href="https://en.wikipedia.org/wiki/Virtual_Network_Computing">VNC</a> in a browser.
+<a class="reference external" href="https://github.com/theasp/docker-novnc">docker-novnc</a> is a docker container that’s been created that runs novnc and can be used
+to visualize gui applications for other docker containers. There are a few requirements to ensure gui apps are correctly visualized, as seen below:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">network</span></code>: Docker networks are used to help containers communicate with other containers or with the host. When spinning up a container that you want to
+visualize a gui app with novnc, you will need to make sure it is connected to the same network as the novnc container, i.e. make sure the original container is
+connected to the same network that you passed to <code class="docutils literal notranslate"><span class="pre">--network</span></code> (or the default <code class="docutils literal notranslate"><span class="pre">wa</span></code> network).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">port</span></code>: The novnc instance can be visualized in your browser at <a class="reference external" href="http://localhost:8080/vnc_auto.html">http://localhost:8080/vnc_auto.html</a>. As seen in the url,
+the application is hosted on port 8080. This port must then be exposed from the container to the host. This is again done by the <code class="docutils literal notranslate"><span class="pre">wa</span> <span class="pre">docker</span> <span class="pre">novnc</span></code> command.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DISPLAY</span></code>: The <a class="reference external" href="https://askubuntu.com/questions/432255/what-is-the-display-environment-variable">DISPLAY</a> environment variable is used to help display
+applications in X window systems (used by any linux based container, like the ones we use). To make sure the gui apps are visualized in novnc when the aforementioned
+requirements are setup, you need to make sure the <code class="docutils literal notranslate"><span class="pre">DISPLAY</span></code> variable is set correctly. The variable should be set to <code class="docutils literal notranslate"><span class="pre">novnc:0.0</span></code> (assuming the novnc container that has
+been setup is named ‘novnc’).</p></li>
+</ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">novnc</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -373,6 +392,32 @@ wa docker run <span class="se">\</span>
 <dt><kbd>--ip</kbd></dt>
 <dd><p>The static ip address to use when connecting to ‘network’.</p>
 <p>Default: “172.20.0.4”</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="docker-network">
+<h4><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">network</span></code><a class="headerlink" href="#docker-network" title="Permalink to this headline">¶</a></h4>
+<p>Command to start a docker network for use with WA applications</p>
+<p>To create complicated docker systems, <a class="reference external" href="https://docs.docker.com/network/">networks</a> are a common mechanism. They
+allow multiple docker containers to be used together, where each implements its own features and is isolated,
+outside of its communication between each other. Example use cases are one container for <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code>,
+one for <code class="docutils literal notranslate"><span class="pre">novnc</span></code> for visualizing gui apps, and one for <code class="docutils literal notranslate"><span class="pre">ros</span></code> to run control logic, where each communicator is
+on the same network and allows for each container to send data between each other.</p>
+<p>This command will initialize a container with defaults that are typical for WA applications.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">network</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="Named Arguments">
+<h5>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>--name</kbd></dt>
+<dd><p>Name of the network to create.</p>
+<p>Default: “wa”</p>
+</dd>
+<dt><kbd>--ip</kbd></dt>
+<dd><p>The ip address to use when creating the network. All containers connected to it must be in the subnet 255.255.255.0 of this value.</p>
+<p>Default: “172.20.0.0”</p>
 </dd>
 </dl>
 </section>
@@ -532,6 +577,10 @@ Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagr
 </ul>
 </li>
 <li><a class="reference internal" href="#docker-novnc"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">novnc</span></code></a><ul>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#docker-network"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">network</span></code></a><ul>
 <li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
