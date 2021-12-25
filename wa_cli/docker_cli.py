@@ -19,8 +19,8 @@ def _init_network(client, network, ip):
         LOGGER.warn(f"{network} has not been created yet. Creating it...")
 
         import ipaddress
-        network = ipaddress.ip_network(f"{ip}/255.255.255.0", strict=False)
-        subnet = str(list(network.subnets())[0])
+        ip_network = ipaddress.ip_network(f"{ip}/255.255.255.0", strict=False)
+        subnet = str(list(ip_network.subnets())[0])
 
         ipam_pool = docker.types.IPAMPool(subnet=subnet)
         ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
@@ -149,14 +149,17 @@ def run_run(args, run_cmd="/bin/bash"):
     cmd = f"python {filename} {' '.join(script_args)}"
 
     # If args.wasim is True, we will use some predefined values that's typical for wa_simulator runs
-    if args.wasim:
+    if args.wasim or args.wasim_without_novnc:
         LOGGER.info("Updating args with 'wasim' defaults...")
         def up(arg, val, dval=None):
             return val if arg == dval else arg
         args.name = up(args.name, "wasim-docker")
         args.image = up(args.image, "wiscauto/wa_simulator:latest")
-        args.port = up(args.port, ["5555:5555"], [])
-        args.environment = up(args.environment, ["DISPLAY=novnc:0.0"], [])
+        args.port.insert(0, "5555:5555")
+        args.port.insert(0, "8888:8888")
+        if not args.wasim_without_novnc:
+            args.environment.insert(0, "DISPLAY=novnc:0.0")
+        args.environment.insert(0, "WA_DATA_DIRECTORY=/root/data")
         args.network = up(args.network, "wa")
         args.ip = up(args.ip, "172.20.0.3")
 
@@ -266,6 +269,30 @@ def run_novnc(args):
         container = client.containers.run(config["image"], ports=config["ports"], remove=True, detach=True, name=config["name"], auto_remove=True, environment=config["environment"])
         _connect_to_network(client, container, config["network"], config["ip"])
 
+def run_network(args):
+    """Command to start a docker network for use with WA applications
+
+    To create complicated docker systems, [networks](https://docs.docker.com/network/) are a common mechanism. They
+    allow multiple docker containers to be used together, where each implements its own features and is isolated,
+    outside of its communication between each other. Example use cases are one container for `wa_simulator`, 
+    one for `novnc` for visualizing gui apps, and one for `ros` to run control logic, where each communicator is
+    on the same network and allows for each container to send data between each other.
+
+    This command will initialize a container with defaults that are typical for WA applications.
+    """
+    LOGGER.debug("Running 'docker network' entrypoint...")
+
+    # Parse the args
+    name = args.name
+    ip = args.ip
+
+    if not args.dry_run:
+        # Get the client
+        client = docker.from_env()
+
+        # Initialize the network
+        _init_network(client, name, ip)
+
 
 def init(subparser):
     """Initializer method for the `docker` entrypoint.
@@ -305,7 +332,11 @@ def init(subparser):
     run.add_argument("--env", type=str, action="append", dest="environment", help="Environment variables.", default=[])
     run.add_argument("--network", type=str, help="The network to communicate with.", default=None)
     run.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'. Used as the server ip.", default=None)
-    run.add_argument("--wasim", action="store_true", help="Run the passed script with all the defaults for the wa_simulator")
+
+    group = run.add_mutually_exclusive_group()
+    group.add_argument("--wasim", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will set 'DISPLAY' to use novnc.")
+    group.add_argument("--wasim-without-novnc", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will not use novnc.")
+
     run.add_argument("script", help="The script to run up in the Docker container")
     run.add_argument("script_args", nargs=argparse.REMAINDER, help="The arguments for the [script]")
     run.set_defaults(cmd=run_run)
@@ -316,5 +347,10 @@ def init(subparser):
     novnc.add_argument("--network", type=str, help="The network to communicate with.", default="wa")
     novnc.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'.", default="172.20.0.4")
     novnc.set_defaults(cmd=run_novnc)
+
+    network = subparsers.add_parser("network", description="Initializes a network to be used for WA docker applications.")
+    network.add_argument("--name", type=str, help="Name of the network to create.", default="wa")
+    network.add_argument("--ip", type=str, help="The ip address to use when creating the network. All containers connected to it must be in the subnet 255.255.255.0 of this value.", default="172.20.0.0")
+    network.set_defaults(cmd=run_network)
 
     return subparser
