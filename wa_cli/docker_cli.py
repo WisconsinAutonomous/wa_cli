@@ -156,7 +156,6 @@ def run_run(args, run_cmd="/bin/bash"):
         args.name = up(args.name, "wasim-docker")
         args.image = up(args.image, "wiscauto/wa_simulator:latest")
         args.port.insert(0, "5555:5555")
-        args.port.insert(0, "8888:8888")
         if not args.wasim_without_novnc:
             args.environment.insert(0, "DISPLAY=novnc:0.0")
         args.environment.insert(0, "WA_DATA_DIRECTORY=/root/data")
