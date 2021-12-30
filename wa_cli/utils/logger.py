@@ -63,3 +63,17 @@ def set_verbosity(verbosity: int):
     LOGGER.setLevel(level)
     CONSOLE_HANDLER.setLevel(level)
     print(f"Verbosity has been set to {logging.getLevelName(level)}")
+
+def dumps_dict(dic: dict) -> str:
+    """
+    Dumps a dictionary in a pretty-ish format to the logger.
+
+    Args:
+       dic (dict): The dictionary to print 
+
+    Returns:
+        str: The pretty-ish string representation of the dict argument
+    """
+    import json
+    return json.dumps(dic, indent=4)
+

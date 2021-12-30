@@ -86,10 +86,6 @@ def init(subparser):
 
     This entrypoint serves as a mechanism for running various scripts meant for members of the
     Wisconsin Autonomous student organization.
-
-    Current subcommands:
-
-        - `license`: Automatically adds a license headers to files in a directory
     """
 
     # Create some entrypoints for additional commands

@@ -28,7 +28,10 @@ CLI command that deals with wiki related commands
 """
 
 # Imports from wa_cli
-from wa_cli.utils.logger import LOGGER
+from wa_cli.utils.logger import LOGGER, dumps_dict
+
+# Docker imports
+from python_on_whales import docker
 
 def run_post(args):
     """The `post` command will create a post template for the Wisconsin Autonomous Wiki.
@@ -126,15 +129,31 @@ Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagr
             f.write(template)
         LOGGER.info(f"Saved template post to {filename}...")
 
+def run_dev(args):
+    """The `dev` command spins up a docker container that serves up a local build of the wiki at [https://localhost:4000](https://localhost:4000)
+
+    To test changes locally, from within the root directory of the [WisconsinAutonomous.github.io](https://github.com/WisconsinAutonomous/WisconsinAutonomous.github.io), run `wa wiki dev`. 
+    This will build the wiki pages locally. Ensure this is done before pushing to github.
+    """
+    LOGGER.debug("Running 'wiki dev' entrypoint...")
+
+    import os
+
+    config = {}
+    config["image"] = "jekyll/jekyll"
+    config["command"] = "jekyll serve".split(" ")
+    config["publish"] = [(4000, 4000)]
+    config["volumes"] = [(os.getcwd(), "/srv/jekyll")]
+
+    LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
+    if not args.dry_run:
+        print(docker.run(**config, remove=True, tty=True))
+
 def init(subparser):
     """Initializer method for the `wiki` entrypoint.
 
     This entrypoint serves as a mechanism for running helpers that relate to
     the wiki website at [WisconsinAutonomous.github.io](https://WisconsinAutonomous.github.io).
-
-    Current subcommands:
-
-        - `post`: Creates a template post.
     """
 
     # Create some entrypoints for additional commands
@@ -148,3 +167,7 @@ def init(subparser):
     post.add_argument("--tag", type=str, dest="tags", action="append", help="The tags to mark on the post", default=[])
     post.add_argument("--email", type=str, help="Email to use in the post.", default="wisconsinautonomous@studentorg.wisc.edu")
     post.set_defaults(cmd=run_post)
+
+    # Dev subcommand
+    dev = subparsers.add_parser("dev", description="Build the wiki locally for developmental purposes.")
+    dev.set_defaults(cmd=run_dev)

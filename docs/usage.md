@@ -155,3 +155,19 @@ nosubcommands:
 nodescription:
 ---
 ```
+
+#### `wiki dev`
+
+```{autosimple} wa_cli.wiki.run_dev
+```
+
+```{argparse}
+---
+module: wa_cli.wa
+func: init
+prog: wa
+path: wiki dev
+nosubcommands:
+nodescription:
+---
+```

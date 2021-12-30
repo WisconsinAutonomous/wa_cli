@@ -1,5 +1,5 @@
 # Imports from wa_cli
-from wa_cli.utils.logger import LOGGER
+from wa_cli.utils.logger import LOGGER, dumps_dict
 from wa_cli.utils.files import file_exists, get_resolved_path
 from wa_cli.utils.dependencies import check_for_dependency
 
@@ -29,7 +29,7 @@ def _parse_args(args):
         split_data = data.split(':')
         hostfile = get_resolved_path(split_data[0], return_as_str=False)
         containerfile = split_data[1] if len(split_data) == 2 else f"/root/{hostfile.name}"
-        vol = (hostfile, containerfile)
+        vol = (str(hostfile), containerfile)
         config["volumes"].append(vol)
 
     # Ports
@@ -129,20 +129,16 @@ def run_run(args, run_cmd="/bin/bash"):
             LOGGER.warn("A data folder was not provided. You may want to pass one...")
 
     config = _parse_args(args)
-    config["volumes"].append((absfile,f"/root/{filename}"))  # The actual python file # noqa
+    config["volumes"].append((str(absfile),f"/root/{filename}"))  # The actual python file # noqa
+    config["command"] = cmd.split(" ")
 
     # Run the script
-    LOGGER.info(f"Running '{cmd}' with the following settings:")
-    LOGGER.info(f"\tImage: {config['image']}")
-    LOGGER.info(f"\tVolumes: {config['volumes']}")
-    LOGGER.info(f"\tPorts: {config['publish']}")
-    LOGGER.info(f"\tNetwork: {config['networks']}")
-    LOGGER.info(f"\tIP: {config['ip']}")
-    LOGGER.info(f"\tEnvironments: {config['envs']}")
-    try:
-        print(docker.run(**config, command=cmd.split(" "), remove=True, tty=True))
-    except docker_exceptions.DockerException as e:
-        pass
+    LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
+    if not args.dry_run:
+        try:
+            print(docker.run(**config, command=cmd.split(" "), remove=True, tty=True))
+        except docker_exceptions.DockerException as e:
+            pass
 
 def run_novnc(args):
     """Command to spin up a `novnc` docker container to allow the visualization of GUI apps in docker
@@ -183,6 +179,7 @@ def run_novnc(args):
     config = _parse_args(args)
 
     # Start up the container
+    LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
         print(docker.run(**config, detach=True, remove=True))
 
@@ -200,14 +197,16 @@ def run_network(args):
     LOGGER.debug("Running 'docker network' entrypoint...")
 
     # Parse the args
-    name = args.name
-    ip = args.ip
+    config = {}
+    config["name"] = args.name
+    config["driver"] = "bridge"
 
     # Determine the subnet from the ip
     import ipaddress
-    ip_network = ipaddress.ip_network(f"{ip}/255.255.255.0", strict=False)
-    subnet = str(list(ip_network.subnets())[0])
+    ip_network = ipaddress.ip_network(f"{args.ip}/255.255.255.0", strict=False)
+    config["subnet"] = str(list(ip_network.subnets())[0])
 
+    LOGGER.debug(f"Creating docker network with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
         print(docker.network.create(driver="bridge", subnet=subnet, name=name))
 
@@ -231,14 +230,9 @@ def init(subparser):
 
     To see specific commands that are available, run the following command:
 
-    .. highlight:: bash
-    .. code-block:: bash
-
-        wa docker -h
-
-    Current subcommands:
-    - `run`: Spins up a container and runs a python script in the created container.
-    - `novnc`: Starts up a novnc container so gui windows can be visualized.
+    ```bash
+    wa docker -h
+    ```
     """
     LOGGER.debug("Running 'docker' entrypoint...")
 
