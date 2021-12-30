@@ -306,6 +306,11 @@ def init(subparser):
     - `8888`: `rosboard` visualizer. See [their github](https://github.com/dheera/rosboard). This is used for visualizing ROS data
     - `5555`: Used by `wa_simulator` to communicate data over a bridge or to another external entity
 
+    There are also a few ip addresses we use and how they are used is seen below:
+    - `172.20.0.2`: Reserved for the control stack
+    - `172.20.0.3`: Reserved for the simulation
+    - `172.20.0.4`: Reserved for novnc
+
     To see specific commands that are available, run the following command:
 
     .. highlight:: bash
