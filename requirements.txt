@@ -1,2 +1,2 @@
 sphinx-argparse
-docker
+python-on-whales

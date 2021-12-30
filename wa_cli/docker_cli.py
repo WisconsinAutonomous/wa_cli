@@ -4,44 +4,11 @@ from wa_cli.utils.files import file_exists, get_resolved_path
 from wa_cli.utils.dependencies import check_for_dependency
 
 # Docker imports
-import docker
-from docker.utils import convert_volume_binds
-from docker.utils.ports import build_port_bindings
+from python_on_whales import docker, exceptions as docker_exceptions
 
 # General imports
 import argparse
 import pathlib
-
-def _init_network(client, network, ip):
-    try:
-        client.networks.get(network)
-    except docker.errors.NotFound as e:
-        LOGGER.warn(f"{network} has not been created yet. Creating it...")
-
-        import ipaddress
-        ip_network = ipaddress.ip_network(f"{ip}/255.255.255.0", strict=False)
-        subnet = str(list(ip_network.subnets())[0])
-
-        ipam_pool = docker.types.IPAMPool(subnet=subnet)
-        ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
-
-        LOGGER.info(
-            f"Creating network with name '{network}' with subnet '{subnet}'.")
-        client.networks.create(name=network, driver="bridge", ipam=ipam_config)
-
-def _connect_to_network(client, container, network, ip):
-        client.networks.get(network).connect(container, ipv4_address=ip) # noqa
-
-def _init_image(client, image):
-    try:
-        client.images.get(image)
-    except docker.errors.APIError as e:
-        LOGGER.warn(
-            f"{image} was not found locally. Pulling from DockerHub. This may take a few minutes...")
-        client.images.pull(image)
-        LOGGER.warn(
-            f"Finished pulling {image} from DockerHub. Running command...")
-
 
 def _parse_args(args):
     # First, populate a config dictionary with the command line arguments
@@ -58,29 +25,29 @@ def _parse_args(args):
     config["volumes"] = []
     # If the path doesn't have a ':', make the container dir at /root/<dir>
     # Also, resolve the paths to be absolute
-    vols = []
     for data in args.data:
         split_data = data.split(':')
         hostfile = get_resolved_path(split_data[0], return_as_str=False)
         containerfile = split_data[1] if len(split_data) == 2 else f"/root/{hostfile.name}"
-        vol = f"{hostfile}:{containerfile}"
-        vols.append(vol)
-    config["volumes"].extend(convert_volume_binds(vols))
+        vol = (hostfile, containerfile)
+        config["volumes"].append(vol)
 
     # Ports
-    config["ports"] = {}
-    ports = []
+    config["publish"] = []
     for port in args.port:
         port = port if ":" in port else f"{port}:{port}"
-        ports.append(port)
-    config["ports"] = build_port_bindings(ports)
+        config["publish"].append(port.split(":"))
 
     # Networks
-    config["network"] = args.network
+    config["networks"] = [args.network]
     config["ip"] = args.ip
 
     # Environment variables
-    config["environment"] = args.environment
+    # Expects all variables to be in the following format: "<variable>=<value>"
+    config["envs"] = {}
+    for e in args.environment:
+        variable, value = e.split("=")
+        config["envs"][variable] = value
 
     return config
 
@@ -130,11 +97,6 @@ def run_run(args, run_cmd="/bin/bash"):
     ```
     """
     LOGGER.debug("Running 'docker run' entrypoint...")
-
-    # Don't want to have install everything when wa_cli is installed
-    # So check dependencies here
-    LOGGER.info("Checking dependencies...")
-    check_for_dependency('docker', install_method='pip install docker-py')
     
     # Grab the args to run
     script = args.script
@@ -167,53 +129,20 @@ def run_run(args, run_cmd="/bin/bash"):
             LOGGER.warn("A data folder was not provided. You may want to pass one...")
 
     config = _parse_args(args)
-    config["volumes"].append(f"{absfile}:/root/{filename}")  # The actual python file # noqa
+    config["volumes"].append((absfile,f"/root/{filename}"))  # The actual python file # noqa
 
     # Run the script
     LOGGER.info(f"Running '{cmd}' with the following settings:")
     LOGGER.info(f"\tImage: {config['image']}")
     LOGGER.info(f"\tVolumes: {config['volumes']}")
-    LOGGER.info(f"\tPorts: {config['ports']}")
-    LOGGER.info(f"\tNetwork: {config['network']}")
+    LOGGER.info(f"\tPorts: {config['publish']}")
+    LOGGER.info(f"\tNetwork: {config['networks']}")
     LOGGER.info(f"\tIP: {config['ip']}")
-    LOGGER.info(f"\tEnvironments: {config['environment']}")
-    if not args.dry_run:
-        try:
-            # Get the client
-            client = docker.from_env()
-
-            # setup the signal listener to listen for the interrupt signal (ctrl+c)
-            import signal
-            import sys
-
-            def signal_handler(sig, frame):
-                if running_container is not None:
-                    LOGGER.info(f"Stopping container.")
-                    running_container.kill()
-                sys.exit(0)
-            signal.signal(signal.SIGINT, signal_handler)
-
-            # Check if image is found locally
-            running_container = None
-            _init_image(client, config["image"])
-
-            # Check if network has been created
-            if config["network"] != "":
-                _init_network(client, config["network"], config["ip"])
-
-            # Run the command
-            running_container = client.containers.run(
-                    config["image"], run_cmd, volumes=config["volumes"], ports=config["ports"], remove=True, detach=True, tty=True, name=config["name"], auto_remove=True)
-            if config["network"] != "":
-                _connect_to_network(client, running_container, config["network"], config["ip"])
-            result = running_container.exec_run(cmd, environment=config["environment"])
-            print(result.output.decode())
-            running_container.kill()
-        except Exception as e:
-            if running_container is not None:
-                running_container.kill()
-
-            raise e
+    LOGGER.info(f"\tEnvironments: {config['envs']}")
+    try:
+        print(docker.run(**config, command=cmd.split(" "), remove=True, tty=True))
+    except docker_exceptions.DockerException as e:
+        pass
 
 def run_novnc(args):
     """Command to spin up a `novnc` docker container to allow the visualization of GUI apps in docker
@@ -255,18 +184,7 @@ def run_novnc(args):
 
     # Start up the container
     if not args.dry_run:
-        # Get the client
-        client = docker.from_env()
-
-        # Initialize the image
-        _init_image(client, config["image"])
-
-        # Initialize the network
-        _init_network(client, config["network"], config["ip"])
-
-        # Run the container
-        container = client.containers.run(config["image"], ports=config["ports"], remove=True, detach=True, name=config["name"], auto_remove=True, environment=config["environment"])
-        _connect_to_network(client, container, config["network"], config["ip"])
+        print(docker.run(**config, detach=True, remove=True))
 
 def run_network(args):
     """Command to start a docker network for use with WA applications
@@ -285,13 +203,13 @@ def run_network(args):
     name = args.name
     ip = args.ip
 
+    # Determine the subnet from the ip
+    import ipaddress
+    ip_network = ipaddress.ip_network(f"{ip}/255.255.255.0", strict=False)
+    subnet = str(list(ip_network.subnets())[0])
+
     if not args.dry_run:
-        # Get the client
-        client = docker.from_env()
-
-        # Initialize the network
-        _init_network(client, name, ip)
-
+        print(docker.network.create(driver="bridge", subnet=subnet, name=name))
 
 def init(subparser):
     """Initializer method for the `docker` entrypoint.
