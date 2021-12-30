@@ -5,7 +5,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
 
     <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
-        <title>Usage - Wisconsin Autonomous Command Line Interface 0.1.7 documentation</title>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.1.11 documentation</title>
       <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
     <link rel="stylesheet" href="_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
@@ -103,7 +103,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.1.7 documentation</div></a>
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.1.11 documentation</div></a>
     </div>
     <div class="header-right">
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
@@ -183,10 +183,6 @@
 <p>Initializer method for the <code class="docutils literal notranslate"><span class="pre">script</span></code> entrypoint.</p>
 <p>This entrypoint serves as a mechanism for running various scripts meant for members of the
 Wisconsin Autonomous student organization.</p>
-<p>Current subcommands:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- `license`: Automatically adds a license headers to files in a directory
-</pre></div>
-</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">script</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">license</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
@@ -249,18 +245,17 @@ on a system locally. The scalability of using Docker over installing packages on
 <li><p><code class="docutils literal notranslate"><span class="pre">8888</span></code>: <code class="docutils literal notranslate"><span class="pre">rosboard</span></code> visualizer. See <a class="reference external" href="https://github.com/dheera/rosboard">their github</a>. This is used for visualizing ROS data</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">5555</span></code>: Used by <code class="docutils literal notranslate"><span class="pre">wa_simulator</span></code> to communicate data over a bridge or to another external entity</p></li>
 </ul>
+<p>There are also a few ip addresses we use and how they are used is seen below:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">172.20.0.2</span></code>: Reserved for the control stack</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">172.20.0.3</span></code>: Reserved for the simulation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">172.20.0.4</span></code>: Reserved for novnc</p></li>
+</ul>
 <p>To see specific commands that are available, run the following command:</p>
-<p>.. highlight:: bash
-.. code-block:: bash</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wa docker -h
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wa docker -h
 </pre></div>
 </div>
-<p>Current subcommands:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">run</span></code>: Spins up a container and runs a python script in the created container.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">novnc</span></code>: Starts up a novnc container so gui windows can be visualized.</p></li>
-</ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">,</span><span class="n">novnc</span><span class="p">,</span><span class="n">network</span><span class="p">}</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">run</span><span class="p">,</span><span class="n">stack</span><span class="p">,</span><span class="n">novnc</span><span class="p">,</span><span class="n">network</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
 <section id="docker-run">
@@ -358,6 +353,48 @@ wa docker run <span class="se">\</span>
 </dl>
 </section>
 </section>
+<section id="docker-stack">
+<h4><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">stack</span></code><a class="headerlink" href="#docker-stack" title="Permalink to this headline">¶</a></h4>
+<p>Command that essentially wraps <code class="docutils literal notranslate"><span class="pre">docker-compose</span></code> and can help spin up, attach, destroy, and build docker-compose based containers.</p>
+<p>This command is completely redudant; it simply will intelligently decide whether to build, spin up, attach or destroy a container. The usage here is for Wisconsin Autonomous members to quickly start and attach to control stack docker containers that are based on the typical docker-compose file that we use.</p>
+<p>To get started, go into whatever repo we’ll call it REPO you’re attempting to use and run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wa docker stack repo-dev
+</pre></div>
+</div>
+<p>The first time this is run, if <code class="docutils literal notranslate"><span class="pre">repo-dev</span></code> isn’t found, it will build it or pull it.
+Then, it will spin up the container and attach to it (unless detach is passed).</p>
+<p>If desired, pass <code class="docutils literal notranslate"><span class="pre">--down</span></code> to stop the container. Further, if the container exists and changes are
+made to the repository, the container will <em>not</em> be built automatically. To do that, add the
+<code class="docutils literal notranslate"><span class="pre">--build</span></code> argument.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">stack</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">down</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">build</span><span class="p">]</span> <span class="n">name</span>
+</pre></div>
+</div>
+<section id="Positional Arguments">
+<h5>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>name</kbd></dt>
+<dd><p>Name of the container.</p>
+</dd>
+</dl>
+</section>
+<section id="Named Arguments">
+<h5>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h5>
+<dl class="option-list">
+<dt><kbd>-d, --detach</kbd></dt>
+<dd><p>Detach from the container.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--down</kbd></dt>
+<dd><p>Tear down the container.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--build</kbd></dt>
+<dd><p>Build the container.</p>
+<p>Default: False</p>
+</dd>
+</dl>
+</section>
+</section>
 <section id="docker-novnc">
 <h4><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">novnc</span></code><a class="headerlink" href="#docker-novnc" title="Permalink to this headline">¶</a></h4>
 <p>Command to spin up a <code class="docutils literal notranslate"><span class="pre">novnc</span></code> docker container to allow the visualization of GUI apps in docker</p>
@@ -428,11 +465,7 @@ on the same network and allows for each container to send data between each othe
 <p>Initializer method for the <code class="docutils literal notranslate"><span class="pre">wiki</span></code> entrypoint.</p>
 <p>This entrypoint serves as a mechanism for running helpers that relate to
 the wiki website at <a class="reference external" href="https://WisconsinAutonomous.github.io">WisconsinAutonomous.github.io</a>.</p>
-<p>Current subcommands:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- `post`: Creates a template post.
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">wiki</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">post</span><span class="p">}</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">wiki</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">{</span><span class="n">post</span><span class="p">,</span><span class="n">dev</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
 <section id="wiki-post">
@@ -497,6 +530,15 @@ Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagr
 </dd>
 </dl>
 </section>
+</section>
+<section id="wiki-dev">
+<h4><code class="docutils literal notranslate"><span class="pre">wiki</span> <span class="pre">dev</span></code><a class="headerlink" href="#wiki-dev" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">dev</span></code> command spins up a docker container that serves up a local build of the wiki at <a class="reference external" href="https://localhost:4000">https://localhost:4000</a></p>
+<p>To test changes locally, from within the root directory of the <a class="reference external" href="https://github.com/WisconsinAutonomous/WisconsinAutonomous.github.io">WisconsinAutonomous.github.io</a>, run <code class="docutils literal notranslate"><span class="pre">wa</span> <span class="pre">wiki</span> <span class="pre">dev</span></code>.
+This will build the wiki pages locally. Ensure this is done before pushing to github.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">wiki</span> <span class="n">dev</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>
@@ -576,6 +618,11 @@ Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagr
 <li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#docker-stack"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">stack</span></code></a><ul>
+<li><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#docker-novnc"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">novnc</span></code></a><ul>
 <li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
@@ -591,6 +638,7 @@ Follow us on [Facebook](https://www.facebook.com/wisconsinautonomous/), [Instagr
 <li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#wiki-dev"><code class="docutils literal notranslate"><span class="pre">wiki</span> <span class="pre">dev</span></code></a></li>
 </ul>
 </li>
 </ul>
