@@ -72,7 +72,7 @@ def run_post(args):
     ```
     """
 
-    LOGGER.debug("Running 'wiki post' entrypoint...")
+    LOGGER.info("Running 'wiki post' entrypoint...")
 
     # The template markdown
     template = """---
@@ -135,7 +135,7 @@ def run_dev(args):
     To test changes locally, from within the root directory of the [WisconsinAutonomous.github.io](https://github.com/WisconsinAutonomous/WisconsinAutonomous.github.io), run `wa wiki dev`. 
     This will build the wiki pages locally. Ensure this is done before pushing to github.
     """
-    LOGGER.debug("Running 'wiki dev' entrypoint...")
+    LOGGER.info("Running 'wiki dev' entrypoint...")
 
     import os
 
@@ -155,6 +155,7 @@ def init(subparser):
     This entrypoint serves as a mechanism for running helpers that relate to
     the wiki website at [WisconsinAutonomous.github.io](https://WisconsinAutonomous.github.io).
     """
+    LOGGER.debug("Initializing 'wiki' entrypoint...")
 
     # Create some entrypoints for additional commands
     subparsers = subparser.add_subparsers(required=False)

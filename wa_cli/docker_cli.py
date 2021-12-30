@@ -96,7 +96,7 @@ def run_run(args, run_cmd="/bin/bash"):
             demo_bridge_server.py --step_size 2e-3
     ```
     """
-    LOGGER.debug("Running 'docker run' entrypoint...")
+    LOGGER.info("Running 'docker run' entrypoint...")
     
     # Grab the args to run
     script = args.script
@@ -140,6 +140,48 @@ def run_run(args, run_cmd="/bin/bash"):
         except docker_exceptions.DockerException as e:
             pass
 
+def run_stack(args):
+    """Command that essentially wraps `docker-compose` and can help spin up, attach, destroy, and build docker-compose based containers.
+
+    This command is completely redudant; it simply will intelligently decide whether to build, spin up, attach or destroy a container. The usage here is for Wisconsin Autonomous members to quickly start and attach to control stack docker containers that are based on the typical docker-compose file that we use.
+
+    To get started, go into whatever repo we'll call it REPO you're attempting to use and run the following command:
+
+    ```bash
+    wa docker stack repo-dev
+    ```
+
+    The first time this is run, if `repo-dev` isn't found, it will build it or pull it. 
+    Then, it will spin up the container and attach to it (unless detach is passed).
+
+    If desired, pass `--down` to stop the container. Further, if the container exists and changes are
+    made to the repository, the container will _not_ be built automatically. To do that, add the 
+    `--build` argument.
+    """
+    LOGGER.info("Running 'docker stack' entrypoint...")
+
+    # Check docker-compose is installed
+    assert docker.compose.is_installed()
+
+    # Generate the config
+    config = {}
+    config["services"] = [args.name]
+    config["build"] = args.build
+
+    # Complete the arguments
+    LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
+    if not args.dry_run:
+        if args.down:
+            LOGGER.info(f"Tearing down {args.name}")
+            docker.compose.down()
+        else:
+            LOGGER.info(f"Spinning up {args.name}")
+            docker.compose.up(**config, detach=True)
+            if not args.detach:
+                usershell = [e for e in docker.container.inspect(args.name).config.env if "USERSHELL" in e][0]
+                shellcmd = usershell.split("=")[-1]
+                print(docker.execute(args.name, [shellcmd], interactive=True, tty=True))
+
 def run_novnc(args):
     """Command to spin up a `novnc` docker container to allow the visualization of GUI apps in docker
 
@@ -157,7 +199,7 @@ def run_novnc(args):
     requirements are setup, you need to make sure the `DISPLAY` variable is set correctly. The variable should be set to `novnc:0.0` (assuming the novnc container that has
     been setup is named 'novnc').
     """
-    LOGGER.debug("Running 'docker novnc' entrypoint...")
+    LOGGER.info("Running 'docker novnc' entrypoint...")
 
     # Set the defaults
     def up(arg, val, dval=None):
@@ -194,7 +236,7 @@ def run_network(args):
 
     This command will initialize a container with defaults that are typical for WA applications.
     """
-    LOGGER.debug("Running 'docker network' entrypoint...")
+    LOGGER.info("Running 'docker network' entrypoint...")
 
     # Parse the args
     config = {}
@@ -234,7 +276,7 @@ def init(subparser):
     wa docker -h
     ```
     """
-    LOGGER.debug("Running 'docker' entrypoint...")
+    LOGGER.debug("Initializing 'docker' entrypoint...")
 
     # Create some entrypoints for additional commands
     subparsers = subparser.add_subparsers(required=False)
@@ -256,6 +298,14 @@ def init(subparser):
     run.add_argument("script", help="The script to run up in the Docker container")
     run.add_argument("script_args", nargs=argparse.REMAINDER, help="The arguments for the [script]")
     run.set_defaults(cmd=run_run)
+
+    # Subcommand that builds, spins up, attaches or shuts down docker container for our control stacks
+    stack = subparsers.add_parser("stack", description="Command to simplify usage of docker-based development of control stacks. Basically wraps docker-compose.")
+    stack.add_argument("-d", "--detach", action="store_true", help="Detach from the container.", default=False)
+    stack.add_argument("--down", action="store_true", help="Tear down the container.", default=False)
+    stack.add_argument("--build", action="store_true", help="Build the container.", default=False)
+    stack.add_argument("name", type=str, help="Name of the container.")
+    stack.set_defaults(cmd=run_stack)
 
     # Subcommand that spins up the novnc container
     novnc = subparsers.add_parser("novnc", description="Starts up a novnc container to be able to visualize stuff in a browser")

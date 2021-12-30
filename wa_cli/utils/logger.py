@@ -34,8 +34,8 @@ CONSOLE_HANDLER = logging.StreamHandler()
 CONSOLE_HANDLER.setFormatter(logging.Formatter(fmt=DEFAULT_LOGGING_FORMAT))
 
 # Set default logging levels
-DEFAULT_LOGGING_LEVEL = logging.WARNING
-CONSOLE_HANDLER.setLevel(logging.WARNING)
+DEFAULT_LOGGING_LEVEL = logging.INFO
+CONSOLE_HANDLER.setLevel(DEFAULT_LOGGING_LEVEL)
 LOGGER.setLevel(DEFAULT_LOGGING_LEVEL)
 
 # Add the handler to the logger
@@ -59,10 +59,10 @@ def set_verbosity(verbosity: int):
         raise ValueError(
             f"Verbosity should be greater than 0 and less than 2. Got {verbosity}.")
 
-    level = logging.WARNING - verbosity * 10
+    level = DEFAULT_LOGGING_LEVEL - verbosity * 10
     LOGGER.setLevel(level)
     CONSOLE_HANDLER.setLevel(level)
-    print(f"Verbosity has been set to {logging.getLevelName(level)}")
+    LOGGER.log(level, f"Verbosity has been set to {logging.getLevelName(level)}")
 
 def dumps_dict(dic: dict) -> str:
     """

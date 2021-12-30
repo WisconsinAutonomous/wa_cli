@@ -92,6 +92,22 @@ nodescription:
 ---
 ```
 
+#### `docker stack`
+
+```{autosimple} wa_cli.docker_cli.run_stack
+```
+
+```{argparse}
+---
+module: wa_cli.wa
+func: init
+prog: wa
+path: docker stack
+nosubcommands:
+nodescription:
+---
+```
+
 #### `docker novnc`
 
 ```{autosimple} wa_cli.docker_cli.run_novnc

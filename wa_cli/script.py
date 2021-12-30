@@ -87,6 +87,7 @@ def init(subparser):
     This entrypoint serves as a mechanism for running various scripts meant for members of the
     Wisconsin Autonomous student organization.
     """
+    LOGGER.debug("Initializing 'script' entrypoint...")
 
     # Create some entrypoints for additional commands
     subparsers = subparser.add_subparsers(required=False)
