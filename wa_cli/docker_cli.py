@@ -250,7 +250,7 @@ def run_network(args):
 
     LOGGER.debug(f"Creating docker network with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
-        print(docker.network.create(driver="bridge", subnet=subnet, name=name))
+        print(docker.network.create(**config))
 
 def init(subparser):
     """Initializer method for the `docker` entrypoint.
