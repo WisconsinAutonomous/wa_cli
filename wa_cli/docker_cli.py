@@ -51,6 +51,29 @@ def _parse_args(args):
 
     return config
 
+def _try_create_network(name, driver="bridge", ip="172.20.0.0", **kwargs):
+    if len(docker.network.list({"name": name})) == 0:
+        # If the network doesn't exist, create it
+
+        # Determine the subnet from the ip
+        import ipaddress
+        ip_network = ipaddress.ip_network(f"{ip}/255.255.255.0", strict=False)
+        subnet = str(list(ip_network.subnets())[0])
+
+        return docker.network.create(name=name, driver=driver, subnet=subnet, **kwargs)
+    return f"Network with name '{name}' has already been created."
+
+def _does_container_exist(name):
+    return len(docker.container.list(filters={"name": name})) != 0
+
+def _try_create_default_novnc(parse_args, log=False):
+    from types import SimpleNamespace
+    args = SimpleNamespace()
+    args.dry_run = parse_args.dry_run
+    args.name = "novnc"
+    args.network = "wa"
+    args.ip = "172.20.0.4"
+    run_novnc(args, log_if_created=log)
 
 def run_run(args, run_cmd="/bin/bash"):
     """The run command will spin up a Docker container that runs a python script with the desired image.
@@ -135,6 +158,7 @@ def run_run(args, run_cmd="/bin/bash"):
     # Run the script
     LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
+        _try_create_network(config["network"])
         try:
             print(docker.run(**config, command=cmd.split(" "), remove=True, tty=True))
         except docker_exceptions.DockerException as e:
@@ -143,16 +167,33 @@ def run_run(args, run_cmd="/bin/bash"):
 def run_stack(args):
     """Command that essentially wraps `docker-compose` and can help spin up, attach, destroy, and build docker-compose based containers.
 
-    This command is completely redudant; it simply will intelligently decide whether to build, spin up, attach or destroy a container. The usage here is for Wisconsin Autonomous members to quickly start and attach to control stack docker containers that are based on the typical docker-compose file that we use.
+    This command is completely redundant; it simply combines all the build, spin up, attach or destroy 
+    logic in a single command. The usage here is for Wisconsin Autonomous members to quickly start 
+    and attach to control stack docker containers that are based on the typical docker-compose file that we use.
 
-    To get started, go into whatever repo we'll call it REPO you're attempting to use and run the following command:
+    There are four possible commands that can be used using the `stack` subcommand: 
+    `build`, `up`, `down`, and `attach`. For example, if you'd like to build the container, you'd run 
+    the following command:
 
     ```bash
-    wa docker stack repo-dev
+    wa docker stack --build
     ```
 
-    The first time this is run, if `repo-dev` isn't found, it will build it or pull it. 
-    Then, it will spin up the container and attach to it (unless detach is passed).
+    If you'd like to build, start the container, then attach to it, run the following command:
+
+    ```bash
+    wa docker stack --build --up --attach
+    # OR (shorthand)
+    wa docker stack -b -u -a
+    # OR
+    wa docker stack -bua
+    ```
+
+    If no arguments are passed, this is equivalent to the following command:
+
+    ```bash
+    wa docker stack --up --attach
+    ```
 
     If desired, pass `--down` to stop the container. Further, if the container exists and changes are
     made to the repository, the container will _not_ be built automatically. To do that, add the 
@@ -163,26 +204,57 @@ def run_stack(args):
     # Check docker-compose is installed
     assert docker.compose.is_installed()
 
-    # Generate the config
-    config = {}
-    config["services"] = [args.name]
-    config["build"] = args.build
+    # If no command is passed, start up the container and attach to it
+    cmds = [args.build, args.up, args.down, args.attach] 
+    if all(not c for c in cmds):
+        args.up = True
+        args.attach = True
+
+    # Get the config
+    try:
+        config = docker.compose.config()
+    except docker_exceptions.DockerException as e:
+        if "no configuration file provided: not found" in str(e):
+            LOGGER.fatal("No docker-compose.yml configuration was found. Make sure you are running this command in the correct repository.")
+            return
+        else:
+            raise e
+
+    # Determine the service name
+    if args.name is None:
+        assert len(config.services.keys()) == 1
+        name = list(config.services.keys())[0]
+    else:
+        name = args.name
+        if not name in config.services.keys():
+            LOGGER.fatal(f"A service with name '{name}' not found in the docker-compose.yml configuration file. Check if the provided name is correct.")
+            return
 
     # Complete the arguments
-    LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
-        if args.down:
-            LOGGER.info(f"Tearing down {args.name}")
-            docker.compose.down()
-        else:
-            LOGGER.info(f"Spinning up {args.name}")
-            docker.compose.up(**config, detach=True)
-            if not args.detach:
-                usershell = [e for e in docker.container.inspect(args.name).config.env if "USERSHELL" in e][0]
-                shellcmd = usershell.split("=")[-1]
-                print(docker.execute(args.name, [shellcmd], interactive=True, tty=True))
+        _try_create_network("wa")
+        _try_create_default_novnc(args)
 
-def run_novnc(args):
+        if args.down:
+            LOGGER.info(f"Tearing down {name}...")
+            docker.compose.down()
+        if args.build:
+            LOGGER.info(f"Building {name}...")
+            docker.compose.build()
+        if args.up:
+            LOGGER.info(f"Spinning up {name}...")
+            docker.compose.up(detach=True)
+        if args.attach:
+            LOGGER.info(f"Attaching to {name}...")
+            try:
+                usershell = [e for e in docker.container.inspect(name).config.env if "USERSHELL" in e][0]
+                shellcmd = usershell.split("=")[-1]
+                shellcmd = [shellcmd, "-c", f"{shellcmd}; echo"]
+                print(docker.execute(name, shellcmd, interactive=True, tty=True))
+            except docker_exceptions.NoSuchContainer as e:
+                LOGGER.fatal(f"{name} has not been started. Please run again with the 'up' command.")
+
+def run_novnc(args, log_if_created=True):
     """Command to spin up a `novnc` docker container to allow the visualization of GUI apps in docker
 
     [noVNC](https://novnc.com/info.html) is a tool for using [VNC](https://en.wikipedia.org/wiki/Virtual_Network_Computing) in a browser.
@@ -216,6 +288,7 @@ def run_novnc(args):
         "RUN_FLUXBOX=yes",
     ]
     args.data = []
+    args.stop = args.stop if hasattr(args, 'stop') else False
 
     # Parse the arguments
     config = _parse_args(args)
@@ -223,7 +296,21 @@ def run_novnc(args):
     # Start up the container
     LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
-        print(docker.run(**config, detach=True, remove=True))
+        # First check if the network has been created
+        # If it hasn't, make it
+        _try_create_network(args.network)
+        if args.stop:
+            if _does_container_exist(config["name"]):
+                LOGGER.info(f"Stopping novnc container with name '{config['name']}")
+                docker.stop(config["name"])
+            else:
+                LOGGER.fatal(f"A novnc container with name '{config['name']}' doesn't exist. Failed to stop a non-existent container.")
+        elif _does_container_exist(config["name"]):
+            if log_if_created:
+                LOGGER.fatal(f"A novnc container with name '{config['name']}' already exists. You can probably ignore this error.")
+        else:
+            LOGGER.info(f"Creating novnc container with name '{config['name']}")
+            print(docker.run(**config, detach=True, remove=True))
 
 def run_network(args):
     """Command to start a docker network for use with WA applications
@@ -243,14 +330,9 @@ def run_network(args):
     config["name"] = args.name
     config["driver"] = "bridge"
 
-    # Determine the subnet from the ip
-    import ipaddress
-    ip_network = ipaddress.ip_network(f"{args.ip}/255.255.255.0", strict=False)
-    config["subnet"] = str(list(ip_network.subnets())[0])
-
     LOGGER.debug(f"Creating docker network with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
-        print(docker.network.create(driver="bridge", subnet=subnet, name=name))
+        print(_try_create_network(**config))
 
 def init(subparser):
     """Initializer method for the `docker` entrypoint.
@@ -301,10 +383,11 @@ def init(subparser):
 
     # Subcommand that builds, spins up, attaches or shuts down docker container for our control stacks
     stack = subparsers.add_parser("stack", description="Command to simplify usage of docker-based development of control stacks. Basically wraps docker-compose.")
-    stack.add_argument("-d", "--detach", action="store_true", help="Detach from the container.", default=False)
-    stack.add_argument("--down", action="store_true", help="Tear down the container.", default=False)
-    stack.add_argument("--build", action="store_true", help="Build the container.", default=False)
-    stack.add_argument("name", type=str, help="Name of the container.")
+    stack.add_argument("-n", "--name", type=str, help="Name of the container.")
+    stack.add_argument("-b", "--build", action="store_true", help="Build the stack.", default=False)
+    stack.add_argument("-u", "--up", action="store_true", help="Spin up the stack.", default=False)
+    stack.add_argument("-d", "--down", action="store_true", help="Tear down the stack.", default=False)
+    stack.add_argument("-a", "--attach", action="store_true", help="Attach to the stack.", default=False)
     stack.set_defaults(cmd=run_stack)
 
     # Subcommand that spins up the novnc container
@@ -312,8 +395,10 @@ def init(subparser):
     novnc.add_argument("--name", type=str, help="Name of the container.", default="novnc")
     novnc.add_argument("--network", type=str, help="The network to communicate with.", default="wa")
     novnc.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'.", default="172.20.0.4")
+    novnc.add_argument("--stop", action="store_true", help="Stop the novnc container.", default=False)
     novnc.set_defaults(cmd=run_novnc)
 
+    # Subcommand that starts a docker network
     network = subparsers.add_parser("network", description="Initializes a network to be used for WA docker applications.")
     network.add_argument("--name", type=str, help="Name of the network to create.", default="wa")
     network.add_argument("--ip", type=str, help="The ip address to use when creating the network. All containers connected to it must be in the subnet 255.255.255.0 of this value.", default="172.20.0.0")

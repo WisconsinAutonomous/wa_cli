@@ -24,14 +24,15 @@
 # SOFTWARE.
 #
 import logging
+from colorlog import ColoredFormatter
 
 # Create logger
 LOGGER = logging.getLogger(__name__)
 
 # Create a handler with the desired format
-DEFAULT_LOGGING_FORMAT = '%(levelname)-8s :: %(module)s.%(funcName)-10s :: %(message)s'
+DEFAULT_LOGGING_FORMAT = '%(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(module)s.%(funcName)s :: %(message)s%(reset)s'
 CONSOLE_HANDLER = logging.StreamHandler()
-CONSOLE_HANDLER.setFormatter(logging.Formatter(fmt=DEFAULT_LOGGING_FORMAT))
+CONSOLE_HANDLER.setFormatter(ColoredFormatter(DEFAULT_LOGGING_FORMAT))
 
 # Set default logging levels
 DEFAULT_LOGGING_LEVEL = logging.INFO
@@ -55,14 +56,16 @@ def set_verbosity(verbosity: int):
         verbosity (int): A value between 0 and 2 that represents the number of levels below WARNING that should be used when logging.
     """
 
-    if verbosity < 0 or verbosity > 2:
+    if verbosity < 0 or verbosity > 1:
         raise ValueError(
             f"Verbosity should be greater than 0 and less than 2. Got {verbosity}.")
 
     level = DEFAULT_LOGGING_LEVEL - verbosity * 10
     LOGGER.setLevel(level)
     CONSOLE_HANDLER.setLevel(level)
-    LOGGER.log(level, f"Verbosity has been set to {logging.getLevelName(level)}")
+    LOGGER.log(
+        level, f"Verbosity has been set to {logging.getLevelName(level)}")
+
 
 def dumps_dict(dic: dict) -> str:
     """
@@ -76,4 +79,3 @@ def dumps_dict(dic: dict) -> str:
     """
     import json
     return json.dumps(dic, indent=4)
-
