@@ -5,7 +5,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
 
     <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
-        <title>Usage - Wisconsin Autonomous Command Line Interface 0.1.11 documentation</title>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.2.0 documentation</title>
       <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
     <link rel="stylesheet" href="_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
@@ -103,7 +103,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.1.11 documentation</div></a>
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
@@ -356,40 +356,53 @@ wa docker run <span class="se">\</span>
 <section id="docker-stack">
 <h4><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">stack</span></code><a class="headerlink" href="#docker-stack" title="Permalink to this headline">¶</a></h4>
 <p>Command that essentially wraps <code class="docutils literal notranslate"><span class="pre">docker-compose</span></code> and can help spin up, attach, destroy, and build docker-compose based containers.</p>
-<p>This command is completely redudant; it simply will intelligently decide whether to build, spin up, attach or destroy a container. The usage here is for Wisconsin Autonomous members to quickly start and attach to control stack docker containers that are based on the typical docker-compose file that we use.</p>
-<p>To get started, go into whatever repo we’ll call it REPO you’re attempting to use and run the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wa docker stack repo-dev
+<p>This command is completely redundant; it simply combines all the build, spin up, attach or destroy
+logic in a single command. The usage here is for Wisconsin Autonomous members to quickly start
+and attach to control stack docker containers that are based on the typical docker-compose file that we use.</p>
+<p>There are four possible commands that can be used using the <code class="docutils literal notranslate"><span class="pre">stack</span></code> subcommand:
+<code class="docutils literal notranslate"><span class="pre">build</span></code>, <code class="docutils literal notranslate"><span class="pre">up</span></code>, <code class="docutils literal notranslate"><span class="pre">down</span></code>, and <code class="docutils literal notranslate"><span class="pre">attach</span></code>. For example, if you’d like to build the container, you’d run
+the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wa docker stack --build
 </pre></div>
 </div>
-<p>The first time this is run, if <code class="docutils literal notranslate"><span class="pre">repo-dev</span></code> isn’t found, it will build it or pull it.
-Then, it will spin up the container and attach to it (unless detach is passed).</p>
+<p>If you’d like to build, start the container, then attach to it, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wa docker stack --build --up --attach
+<span class="c1"># OR (shorthand)</span>
+wa docker stack -b -u -a
+<span class="c1"># OR</span>
+wa docker stack -bua
+</pre></div>
+</div>
+<p>If no arguments are passed, this is equivalent to the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wa docker stack --up --attach
+</pre></div>
+</div>
 <p>If desired, pass <code class="docutils literal notranslate"><span class="pre">--down</span></code> to stop the container. Further, if the container exists and changes are
 made to the repository, the container will <em>not</em> be built automatically. To do that, add the
 <code class="docutils literal notranslate"><span class="pre">--build</span></code> argument.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">stack</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">down</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">build</span><span class="p">]</span> <span class="n">name</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">stack</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">u</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span><span class="p">]</span>
 </pre></div>
 </div>
-<section id="Positional Arguments">
-<h5>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline">¶</a></h5>
-<dl class="option-list">
-<dt><kbd>name</kbd></dt>
-<dd><p>Name of the container.</p>
-</dd>
-</dl>
-</section>
 <section id="Named Arguments">
 <h5>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h5>
 <dl class="option-list">
-<dt><kbd>-d, --detach</kbd></dt>
-<dd><p>Detach from the container.</p>
+<dt><kbd>-n, --name</kbd></dt>
+<dd><p>Name of the container.</p>
+</dd>
+<dt><kbd>-b, --build</kbd></dt>
+<dd><p>Build the stack.</p>
 <p>Default: False</p>
 </dd>
-<dt><kbd>--down</kbd></dt>
-<dd><p>Tear down the container.</p>
+<dt><kbd>-u, --up</kbd></dt>
+<dd><p>Spin up the stack.</p>
 <p>Default: False</p>
 </dd>
-<dt><kbd>--build</kbd></dt>
-<dd><p>Build the container.</p>
+<dt><kbd>-d, --down</kbd></dt>
+<dd><p>Tear down the stack.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>-a, --attach</kbd></dt>
+<dd><p>Attach to the stack.</p>
 <p>Default: False</p>
 </dd>
 </dl>
@@ -413,6 +426,7 @@ requirements are setup, you need to make sure the <code class="docutils literal 
 been setup is named ‘novnc’).</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">novnc</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span>
+                       <span class="p">[</span><span class="o">--</span><span class="n">stop</span><span class="p">]</span>
 </pre></div>
 </div>
 <section id="Named Arguments">
@@ -429,6 +443,10 @@ been setup is named ‘novnc’).</p></li>
 <dt><kbd>--ip</kbd></dt>
 <dd><p>The static ip address to use when connecting to ‘network’.</p>
 <p>Default: “172.20.0.4”</p>
+</dd>
+<dt><kbd>--stop</kbd></dt>
+<dd><p>Stop the novnc container.</p>
+<p>Default: False</p>
 </dd>
 </dl>
 </section>
@@ -619,7 +637,6 @@ This will build the wiki pages locally. Ensure this is done before pushing to gi
 </ul>
 </li>
 <li><a class="reference internal" href="#docker-stack"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">stack</span></code></a><ul>
-<li><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
 <li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
