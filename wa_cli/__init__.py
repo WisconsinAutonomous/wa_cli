@@ -24,7 +24,6 @@
 # SOFTWARE.
 #
 
-from time import time as get_wall_time
 import signal
 from ._import import _import, _get_dirs, _get_files
 from ._version import version as __version__

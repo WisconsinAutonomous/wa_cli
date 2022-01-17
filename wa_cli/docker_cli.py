@@ -66,14 +66,14 @@ def _try_create_network(name, driver="bridge", ip="172.20.0.0", **kwargs):
 def _does_container_exist(name):
     return len(docker.container.list(filters={"name": name})) != 0
 
-def _try_create_default_novnc(parse_args, log=False):
+def _try_create_default_vnc(parse_args, log=False):
     from types import SimpleNamespace
     args = SimpleNamespace()
     args.dry_run = parse_args.dry_run
-    args.name = "novnc"
+    args.name = "vnc"
     args.network = "wa"
     args.ip = "172.20.0.4"
-    run_novnc(args, log_if_created=log)
+    run_vnc(args, log_if_created=log)
 
 def run_run(args, run_cmd="/bin/bash"):
     """The run command will spin up a Docker container that runs a python script with the desired image.
@@ -134,15 +134,15 @@ def run_run(args, run_cmd="/bin/bash"):
     cmd = f"python {filename} {' '.join(script_args)}"
 
     # If args.wasim is True, we will use some predefined values that's typical for wa_simulator runs
-    if args.wasim or args.wasim_without_novnc:
+    if args.wasim or args.wasim_without_vnc:
         LOGGER.info("Updating args with 'wasim' defaults...")
         def up(arg, val, dval=None):
             return val if arg == dval else arg
         args.name = up(args.name, "wasim-docker")
         args.image = up(args.image, "wiscauto/wa_simulator:latest")
         args.port.insert(0, "5555:5555")
-        if not args.wasim_without_novnc:
-            args.environment.insert(0, "DISPLAY=novnc:0.0")
+        if not args.wasim_without_vnc:
+            args.environment.insert(0, "DISPLAY=vnc:0.0")
         args.environment.insert(0, "WA_DATA_DIRECTORY=/root/data")
         args.network = up(args.network, "wa")
         args.ip = up(args.ip, "172.20.0.3")
@@ -233,7 +233,7 @@ def run_stack(args):
     # Complete the arguments
     if not args.dry_run:
         _try_create_network("wa")
-        _try_create_default_novnc(args)
+        _try_create_default_vnc(args)
 
         if args.down:
             LOGGER.info(f"Tearing down {name}...")
@@ -254,39 +254,34 @@ def run_stack(args):
             except docker_exceptions.NoSuchContainer as e:
                 LOGGER.fatal(f"{name} has not been started. Please run again with the 'up' command.")
 
-def run_novnc(args, log_if_created=True):
-    """Command to spin up a `novnc` docker container to allow the visualization of GUI apps in docker
+def run_vnc(args, log_if_created=True):
+    """Command to spin up a `vnc` docker container to allow the visualization of GUI apps in docker
 
     [noVNC](https://novnc.com/info.html) is a tool for using [VNC](https://en.wikipedia.org/wiki/Virtual_Network_Computing) in a browser.
-    [docker-novnc](https://github.com/theasp/docker-novnc) is a docker container that's been created that runs novnc and can be used
-    to visualize gui applications for other docker containers. There are a few requirements to ensure gui apps are correctly visualized, as seen below:
+    [docker-vnc](https://github.com/wisconsinautonomous/docker-vnc) is a docker container that's been created that runs vnc and can be used
+    to visualize gui applications for other docker containers in a browser or via a vnc viewer. There are a few requirements to ensure gui apps are correctly visualized, as seen below:
 
     - `network`: Docker networks are used to help containers communicate with other containers or with the host. When spinning up a container that you want to 
-    visualize a gui app with novnc, you will need to make sure it is connected to the same network as the novnc container, i.e. make sure the original container is 
+    visualize a gui app with vnc, you will need to make sure it is connected to the same network as the vnc container, i.e. make sure the original container is 
     connected to the same network that you passed to `--network` (or the default `wa` network).
     - `port`: The novnc instance can be visualized in your browser at [http://localhost:8080/vnc_auto.html](http://localhost:8080/vnc_auto.html). As seen in the url,
-    the application is hosted on port 8080. This port must then be exposed from the container to the host. This is again done by the `wa docker novnc` command.
+    the application is hosted on port 8080. This port must then be exposed from the container to the host. This is again done by the `wa docker novnc` command. Furthermore, to visualzie the apps in a vnc viewer, 5900 also has to be exposed.
     - `DISPLAY`: The [DISPLAY](https://askubuntu.com/questions/432255/what-is-the-display-environment-variable) environment variable is used to help display
-    applications in X window systems (used by any linux based container, like the ones we use). To make sure the gui apps are visualized in novnc when the aforementioned
-    requirements are setup, you need to make sure the `DISPLAY` variable is set correctly. The variable should be set to `novnc:0.0` (assuming the novnc container that has
-    been setup is named 'novnc').
+    applications in X window systems (used by any linux based container, like the ones we use). To make sure the gui apps are visualized in vnc when the aforementioned
+    requirements are setup, you need to make sure the `DISPLAY` variable is set correctly. The variable should be set to `vnc:0.0` (assuming the vnc container that has
+    been setup is named 'vnc').
     """
-    LOGGER.info("Running 'docker novnc' entrypoint...")
+    LOGGER.info("Running 'docker vnc' entrypoint...")
 
     # Set the defaults
     def up(arg, val, dval=None):
         return val if arg == dval else arg
-    args.image = "theasp/novnc:latest"
-    args.name = up(args.name, "novnc")
-    args.port = ["8080:8080"]
+    args.image = "wiscauto/vnc:latest"
+    args.name = up(args.name, "vnc")
+    args.port = ["8080:8080", "5900:5900"]
     args.network = up(args.network, "wa")
     args.ip = up(args.ip, "172.20.0.4")
-    args.environment =[
-        "DISPLAY_WIDTH=5000",
-        "DISPLAY_HEIGHT=5000",
-        "RUN_XTERM=no",
-        "RUN_FLUXBOX=yes",
-    ]
+    args.environment = []
     args.data = []
     args.stop = args.stop if hasattr(args, 'stop') else False
 
@@ -301,15 +296,15 @@ def run_novnc(args, log_if_created=True):
         _try_create_network(args.network)
         if args.stop:
             if _does_container_exist(config["name"]):
-                LOGGER.info(f"Stopping novnc container with name '{config['name']}")
+                LOGGER.info(f"Stopping vnc container with name '{config['name']}'")
                 docker.stop(config["name"])
             else:
-                LOGGER.fatal(f"A novnc container with name '{config['name']}' doesn't exist. Failed to stop a non-existent container.")
+                LOGGER.fatal(f"A vnc container with name '{config['name']}' doesn't exist. Failed to stop a non-existent container.")
         elif _does_container_exist(config["name"]):
             if log_if_created:
-                LOGGER.fatal(f"A novnc container with name '{config['name']}' already exists. You can probably ignore this error.")
+                LOGGER.fatal(f"A vnc container with name '{config['name']}' already exists. You can probably ignore this error.")
         else:
-            LOGGER.info(f"Creating novnc container with name '{config['name']}")
+            LOGGER.info(f"Creating vnc container with name '{config['name']}")
             print(docker.run(**config, detach=True, remove=True))
 
 def run_network(args):
@@ -318,7 +313,7 @@ def run_network(args):
     To create complicated docker systems, [networks](https://docs.docker.com/network/) are a common mechanism. They
     allow multiple docker containers to be used together, where each implements its own features and is isolated,
     outside of its communication between each other. Example use cases are one container for `wa_simulator`, 
-    one for `novnc` for visualizing gui apps, and one for `ros` to run control logic, where each communicator is
+    one for `vnc` for visualizing gui apps, and one for `ros` to run control logic, where each communicator is
     on the same network and allows for each container to send data between each other.
 
     This command will initialize a container with defaults that are typical for WA applications.
@@ -344,13 +339,14 @@ def init(subparser):
 
     There are a few ports that may be exposed, and the _typical_ purpose of each port (for wa) is outlined below:
     - `8080`: `novnc` port to display gui apps in a browser.
+    - `5900`: `vnc` port for displaying gui apps in a vnc viewer
     - `8888`: `rosboard` visualizer. See [their github](https://github.com/dheera/rosboard). This is used for visualizing ROS data
     - `5555`: Used by `wa_simulator` to communicate data over a bridge or to another external entity
 
     There are also a few ip addresses we use and how they are used is seen below:
     - `172.20.0.2`: Reserved for the control stack
     - `172.20.0.3`: Reserved for the simulation
-    - `172.20.0.4`: Reserved for novnc
+    - `172.20.0.4`: Reserved for vnc
 
     To see specific commands that are available, run the following command:
 
@@ -374,8 +370,8 @@ def init(subparser):
     run.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'. Used as the server ip.", default=None)
 
     group = run.add_mutually_exclusive_group()
-    group.add_argument("--wasim", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will set 'DISPLAY' to use novnc.")
-    group.add_argument("--wasim-without-novnc", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will not use novnc.")
+    group.add_argument("--wasim", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will set 'DISPLAY' to use vnc.")
+    group.add_argument("--wasim-without-vnc", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will not use vnc.")
 
     run.add_argument("script", help="The script to run up in the Docker container")
     run.add_argument("script_args", nargs=argparse.REMAINDER, help="The arguments for the [script]")
@@ -390,13 +386,13 @@ def init(subparser):
     stack.add_argument("-a", "--attach", action="store_true", help="Attach to the stack.", default=False)
     stack.set_defaults(cmd=run_stack)
 
-    # Subcommand that spins up the novnc container
-    novnc = subparsers.add_parser("novnc", description="Starts up a novnc container to be able to visualize stuff in a browser")
-    novnc.add_argument("--name", type=str, help="Name of the container.", default="novnc")
-    novnc.add_argument("--network", type=str, help="The network to communicate with.", default="wa")
-    novnc.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'.", default="172.20.0.4")
-    novnc.add_argument("--stop", action="store_true", help="Stop the novnc container.", default=False)
-    novnc.set_defaults(cmd=run_novnc)
+    # Subcommand that spins up the vnc container
+    vnc = subparsers.add_parser("vnc", description="Starts up a vnc container to be able to visualize stuff in a browser")
+    vnc.add_argument("--name", type=str, help="Name of the container.", default="vnc")
+    vnc.add_argument("--network", type=str, help="The network to communicate with.", default="wa")
+    vnc.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'.", default="172.20.0.4")
+    vnc.add_argument("--stop", action="store_true", help="Stop the vnc container.", default=False)
+    vnc.set_defaults(cmd=run_vnc)
 
     # Subcommand that starts a docker network
     network = subparsers.add_parser("network", description="Initializes a network to be used for WA docker applications.")
