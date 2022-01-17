@@ -108,9 +108,9 @@ nodescription:
 ---
 ```
 
-#### `docker novnc`
+#### `docker vnc`
 
-```{autosimple} wa_cli.docker_cli.run_novnc
+```{autosimple} wa_cli.docker_cli.run_vnc
 ```
 
 ```{argparse}
@@ -118,7 +118,7 @@ nodescription:
 module: wa_cli.wa
 func: init
 prog: wa
-path: docker novnc
+path: docker vnc
 nosubcommands:
 nodescription:
 ---
