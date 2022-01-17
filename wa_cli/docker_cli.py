@@ -299,10 +299,10 @@ def run_vnc(args, log_if_created=True):
                 LOGGER.info(f"Stopping vnc container with name '{config['name']}'")
                 docker.stop(config["name"])
             else:
-                LOGGER.fatal(f"A vnc container with name '{config['name']}' doesn't exist. Failed to stop a non-existent container.")
+                LOGGER.warn(f"A vnc container with name '{config['name']}' doesn't exist. Nothing to do.")
         elif _does_container_exist(config["name"]):
             if log_if_created:
-                LOGGER.fatal(f"A vnc container with name '{config['name']}' already exists. You can probably ignore this error.")
+                LOGGER.warn(f"A vnc container with name '{config['name']}' already exists. You can probably ignore this error.")
         else:
             LOGGER.info(f"Creating vnc container with name '{config['name']}")
             print(docker.run(**config, detach=True, remove=True))
