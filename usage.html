@@ -5,7 +5,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Installation" href="installation.html" />
 
     <link rel="shortcut icon" href="_static/wa-dark-favicon.png"/><meta name="generator" content="sphinx-3.4.2, furo 2020.12.30.beta24"/>
-        <title>Usage - Wisconsin Autonomous Command Line Interface 0.2.2 documentation</title>
+        <title>Usage - Wisconsin Autonomous Command Line Interface 0.2.3 documentation</title>
       <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
     <link rel="stylesheet" href="_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
@@ -103,7 +103,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.2.2 documentation</div></a>
+      <a href="index.html"><div class="brand">Wisconsin Autonomous Command Line Interface 0.2.3 documentation</div></a>
     </div>
     <div class="header-right">
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
@@ -301,7 +301,7 @@ wa docker run <span class="se">\</span>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">wa</span> <span class="n">docker</span> <span class="n">run</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">image</span> <span class="n">IMAGE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">data</span> <span class="n">DATA</span><span class="p">]</span>
                      <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">env</span> <span class="n">ENVIRONMENT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">network</span> <span class="n">NETWORK</span><span class="p">]</span>
-                     <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">wasim</span> <span class="o">|</span> <span class="o">--</span><span class="n">wasim</span><span class="o">-</span><span class="n">without</span><span class="o">-</span><span class="n">vnc</span><span class="p">]</span>
+                     <span class="p">[</span><span class="o">--</span><span class="n">ip</span> <span class="n">IP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">wasim</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">vnc</span><span class="p">]</span>
                      <span class="n">script</span> <span class="o">...</span>
 </pre></div>
 </div>
@@ -347,8 +347,8 @@ wa docker run <span class="se">\</span>
 <dd><p>Run the passed script with all the defaults for the wa_simulator. Will set ‘DISPLAY’ to use vnc.</p>
 <p>Default: False</p>
 </dd>
-<dt><kbd>--wasim-without-vnc</kbd></dt>
-<dd><p>Run the passed script with all the defaults for the wa_simulator. Will not use vnc.</p>
+<dt><kbd>--no-vnc</kbd></dt>
+<dd><p>Don’t implicitly create a vnc server. Not to be confused with noVNC.</p>
 <p>Default: False</p>
 </dd>
 </dl>
