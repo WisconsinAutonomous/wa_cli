@@ -134,14 +134,14 @@ def run_run(args, run_cmd="/bin/bash"):
     cmd = f"python {filename} {' '.join(script_args)}"
 
     # If args.wasim is True, we will use some predefined values that's typical for wa_simulator runs
-    if args.wasim or args.wasim_without_vnc:
+    if args.wasim:
         LOGGER.info("Updating args with 'wasim' defaults...")
         def up(arg, val, dval=None):
             return val if arg == dval else arg
         args.name = up(args.name, "wasim-docker")
         args.image = up(args.image, "wiscauto/wa_simulator:latest")
-        args.port.insert(0, "5555:5555")
-        if not args.wasim_without_vnc:
+        args.port.insert(0, "5555:5555") # For bridge communication
+        if not args.no_vnc:
             args.environment.insert(0, "DISPLAY=vnc:0.0")
         args.environment.insert(0, "WA_DATA_DIRECTORY=/root/data")
         args.network = up(args.network, "wa")
@@ -158,9 +158,11 @@ def run_run(args, run_cmd="/bin/bash"):
     # Run the script
     LOGGER.debug(f"Running docker container with the following arguments: {dumps_dict(config)}")
     if not args.dry_run:
-        _try_create_network(config["network"])
+        _try_create_network(config["networks"])
+        if not args.no_vnc:
+            _try_create_default_vnc(args)
         try:
-            print(docker.run(**config, command=cmd.split(" "), remove=True, tty=True))
+            print(docker.run(**config, remove=True, tty=True))
         except docker_exceptions.DockerException as e:
             pass
 
@@ -368,11 +370,8 @@ def init(subparser):
     run.add_argument("--env", type=str, action="append", dest="environment", help="Environment variables.", default=[])
     run.add_argument("--network", type=str, help="The network to communicate with.", default=None)
     run.add_argument("--ip", type=str, help="The static ip address to use when connecting to 'network'. Used as the server ip.", default=None)
-
-    group = run.add_mutually_exclusive_group()
-    group.add_argument("--wasim", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will set 'DISPLAY' to use vnc.")
-    group.add_argument("--wasim-without-vnc", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will not use vnc.")
-
+    run.add_argument("--wasim", action="store_true", help="Run the passed script with all the defaults for the wa_simulator. Will set 'DISPLAY' to use vnc.")
+    run.add_argument("--no-vnc", action="store_true", help="Don't implicitly create a vnc server. Not to be confused with noVNC.", default=False)
     run.add_argument("script", help="The script to run up in the Docker container")
     run.add_argument("script_args", nargs=argparse.REMAINDER, help="The arguments for the [script]")
     run.set_defaults(cmd=run_run)
