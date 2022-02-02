@@ -59,6 +59,9 @@ def init():
     docker_cli.init(subparsers.add_parser("docker", description="Entrypoint for Docker related commands"))
     wiki.init(subparsers.add_parser("wiki", description="Entrypoint for internal wiki related commands"))
 
+    # Alias for the wa docker stack command
+    docker_cli.init_dev(subparsers.add_parser("dev", description="Entrypoint to the development environment."))
+
     return parser
 
 def main():

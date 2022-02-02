@@ -166,6 +166,43 @@ def run_run(args, run_cmd="/bin/bash"):
         except docker_exceptions.DockerException as e:
             pass
 
+def run_dev(args):
+    """Command that essentially wraps `docker-compose` and can help spin up, attach, destroy, and build docker-compose based containers.
+
+    This command is completely redundant; it simply combines all the build, spin up, attach or destroy 
+    logic in a single command. The usage here is for Wisconsin Autonomous members to quickly start 
+    and attach to control stack docker containers that are based on the typical docker-compose file that we use.
+
+    There are four possible commands that can be used using the `dev` subcommand: 
+    `build`, `up`, `down`, and `attach`. For example, if you'd like to build the container, you'd run 
+    the following command:
+
+    ```bash
+    wa dev --build
+    ```
+
+    If you'd like to build, start the container, then attach to it, run the following command:
+
+    ```bash
+    wa dev --build --up --attach
+    # OR (shorthand)
+    wa dev -b -u -a
+    # OR
+    wa dev -bua
+    ```
+
+    If no arguments are passed, this is equivalent to the following command:
+
+    ```bash
+    wa dev --up --attach
+    ```
+
+    If desired, pass `--down` to stop the container. Further, if the container exists and changes are
+    made to the repository, the container will _not_ be built automatically. To do that, add the 
+    `--build` argument.
+    """
+    run_stack(args)
+
 def run_stack(args):
     """Command that essentially wraps `docker-compose` and can help spin up, attach, destroy, and build docker-compose based containers.
 
@@ -329,7 +366,6 @@ def init(subparser):
 
     # Subcommand that builds, spins up, attaches or shuts down docker container for our control stacks
     stack = subparsers.add_parser("stack", description="Command to simplify usage of docker-based development of control stacks. Basically wraps docker-compose.")
-    stack.add_argument("-n", "--name", type=str, help="Name of the container.")
     stack.add_argument("-b", "--build", action="store_true", help="Build the stack.", default=False)
     stack.add_argument("-u", "--up", action="store_true", help="Spin up the stack.", default=False)
     stack.add_argument("-d", "--down", action="store_true", help="Tear down the stack.", default=False)
@@ -351,3 +387,11 @@ def init(subparser):
     network.set_defaults(cmd=run_network)
 
     return subparser
+
+def init_dev(subparser):
+    # Subcommand that builds, spins up, attaches or shuts down docker container for our control stacks
+    subparser.add_argument("-b", "--build", action="store_true", help="Build the subparser.", default=False)
+    subparser.add_argument("-u", "--up", action="store_true", help="Spin up the subparser.", default=False)
+    subparser.add_argument("-d", "--down", action="store_true", help="Tear down the subparser.", default=False)
+    subparser.add_argument("-a", "--attach", action="store_true", help="Attach to the subparser.", default=False)
+    subparser.set_defaults(cmd=run_dev)
