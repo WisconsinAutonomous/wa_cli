@@ -1,3 +1,4 @@
 sphinx-argparse
 python-on-whales
 colorlog
+avtoolbox

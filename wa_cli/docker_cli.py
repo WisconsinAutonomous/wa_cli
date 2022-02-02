@@ -203,58 +203,9 @@ def run_stack(args):
     """
     LOGGER.info("Running 'docker stack' entrypoint...")
 
-    # Check docker-compose is installed
-    assert docker.compose.is_installed()
+    from avtoolbox.dev import _run_env
 
-    # If no command is passed, start up the container and attach to it
-    cmds = [args.build, args.up, args.down, args.attach] 
-    if all(not c for c in cmds):
-        args.up = True
-        args.attach = True
-
-    # Get the config
-    try:
-        config = docker.compose.config()
-    except docker_exceptions.DockerException as e:
-        if "no configuration file provided: not found" in str(e):
-            LOGGER.fatal("No docker-compose.yml configuration was found. Make sure you are running this command in the correct repository.")
-            return
-        else:
-            raise e
-
-    # Determine the service name
-    if args.name is None:
-        assert len(config.services.keys()) == 1
-        name = list(config.services.keys())[0]
-    else:
-        name = args.name
-        if not name in config.services.keys():
-            LOGGER.fatal(f"A service with name '{name}' not found in the docker-compose.yml configuration file. Check if the provided name is correct.")
-            return
-
-    # Complete the arguments
-    if not args.dry_run:
-        _try_create_network("wa")
-        _try_create_default_vnc(args)
-
-        if args.down:
-            LOGGER.info(f"Tearing down {name}...")
-            docker.compose.down()
-        if args.build:
-            LOGGER.info(f"Building {name}...")
-            docker.compose.build()
-        if args.up:
-            LOGGER.info(f"Spinning up {name}...")
-            docker.compose.up(detach=True)
-        if args.attach:
-            LOGGER.info(f"Attaching to {name}...")
-            try:
-                usershell = [e for e in docker.container.inspect(name).config.env if "USERSHELL" in e][0]
-                shellcmd = usershell.split("=")[-1]
-                shellcmd = [shellcmd, "-c", f"{shellcmd}; echo"]
-                print(docker.execute(name, shellcmd, interactive=True, tty=True))
-            except docker_exceptions.NoSuchContainer as e:
-                LOGGER.fatal(f"{name} has not been started. Please run again with the 'up' command.")
+    _run_env(args)
 
 def run_vnc(args, log_if_created=True):
     """Command to spin up a `vnc` docker container to allow the visualization of GUI apps in docker
