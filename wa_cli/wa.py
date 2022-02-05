@@ -34,6 +34,7 @@ subparsers may be `docker` to do things with Docker containers, or
 # Command imports
 import wa_cli.script as script
 import wa_cli.docker_cli as docker_cli
+import avtoolbox.dev as dev
 import wa_cli.wiki as wiki
 
 # Utility imports
@@ -60,7 +61,7 @@ def init():
     wiki.init(subparsers.add_parser("wiki", description="Entrypoint for internal wiki related commands"))
 
     # Alias for the wa docker stack command
-    docker_cli.init_dev(subparsers.add_parser("dev", description="Entrypoint to the development environment."))
+    dev._init(subparsers.add_parser("dev", description="Work with the AV development environment"))
 
     return parser
 
