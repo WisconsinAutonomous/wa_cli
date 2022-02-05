@@ -394,4 +394,6 @@ def init_dev(subparser):
     subparser.add_argument("-u", "--up", action="store_true", help="Spin up the subparser.", default=False)
     subparser.add_argument("-d", "--down", action="store_true", help="Tear down the subparser.", default=False)
     subparser.add_argument("-a", "--attach", action="store_true", help="Attach to the subparser.", default=False)
+    subparser.add_argument("--keep-yml", action="store_true", help="Don't delete the generated docker-compose file.", default=False)
+    subparser.add_argument("--services", nargs='+', help="The services to use. Defaults to 'all' or whatever 'default_services' is set to in .avtoolbox.yml. 'dev' or 'all' is required for the 'attach' argument. If 'all' is passed, all the services are used.", default=None)
     subparser.set_defaults(cmd=run_dev)
